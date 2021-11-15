@@ -14,11 +14,11 @@ export type FormElementValidation =
   | undefined
   | string
   | {
-      type: 'formElements'
+      type: "formElements"
       formElements: FormElementsValidation | undefined
     }
   | {
-      type: 'repeatableSet'
+      type: "repeatableSet"
       set: string | undefined
       entries: Record<
         RepeatableSetEntryIndex,
@@ -34,17 +34,17 @@ export type FormElementsConditionallyShown = Record<
 export type FormElementConditionallyShown =
   | undefined
   | {
-      type: 'formElement'
+      type: "formElement"
       isHidden: boolean
-      options?: import('@oneblink/types').FormTypes.ChoiceElementOption[]
+      options?: import("@oneblink/types").FormTypes.ChoiceElementOption[]
     }
   | {
-      type: 'formElements'
+      type: "formElements"
       isHidden: boolean
       formElements: FormElementsConditionallyShown | undefined
     }
   | {
-      type: 'repeatableSet'
+      type: "repeatableSet"
       isHidden: boolean
       entries: Record<
         RepeatableSetEntryIndex,
@@ -53,18 +53,18 @@ export type FormElementConditionallyShown =
     }
 
 export type FormElementValueChangeHandler<T = unknown> = (
-  element: import('@oneblink/types').FormTypes.FormElement,
-  value?: T | ((existingValue?: T) => T | undefined),
+  element: import("@oneblink/types").FormTypes.FormElement,
+  value?: T | ((existingValue?: T) => T | undefined)
 ) => void
 
 export type FormElementLookupHandler = (
   setter: (data: {
     submission: FormSubmissionModel
-    elements: import('@oneblink/types').FormTypes.FormElement[]
+    elements: import("@oneblink/types").FormTypes.FormElement[]
   }) => {
     submission: FormSubmissionModel
-    elements: import('@oneblink/types').FormTypes.FormElement[]
-  },
+    elements: import("@oneblink/types").FormTypes.FormElement[]
+  }
 ) => void
 
 // export type SetFormSubmission = React.Dispatch<

@@ -1,49 +1,37 @@
 <template>
-  <OneBlinkForm />
+  <div v-if="definition">
+    <OneBlinkForm :definition="definition" />
+  </div>
 </template>
 
 <script lang="ts">
+import Vue from "vue"
 import OneBlinkForm from "./OneBlinkFormUncontrolled.vue"
+import { formService } from "@oneblink/apps"
+import { FormTypes } from "@oneblink/types"
+import "@oneblink/apps-react/dist/styles.css"
 
-export default {
+type DataProps = {
+  definition?: FormTypes.Form
+  loading: boolean
+}
+
+export default Vue.extend({
   components: {
     OneBlinkForm,
   },
-  data() {
+  data(): DataProps {
     return {
-      definition: {
-        id: 9050,
-        name: "Text Field",
-        description: "Just a text field",
-        organisationId: "5f3f597239c5511100000007",
-        elements: [
-          {
-            name: "TField",
-            label: "Text Field",
-            type: "text",
-            required: false,
-            id: "76763797-479b-4754-8897-a083d62a0ff1",
-            conditionallyShow: false,
-            readOnly: false,
-            isDataLookup: false,
-            isElementLookup: false,
-          },
-        ],
-        isAuthenticated: false,
-        submissionEvents: [],
-        createdAt: "2021-11-13T02:34:42.000Z",
-        updatedAt: "2021-11-14T00:15:58.000Z",
-        isMultiPage: false,
-        postSubmissionAction: "FORMS_LIBRARY",
-        cancelAction: "FORMS_LIBRARY",
-        isInfoPage: false,
-        formsAppEnvironmentId: 363,
-        tags: [],
-        formsAppIds: [992],
-      },
+      definition: undefined,
+      loading: false,
     }
   },
-}
+  async mounted() {
+    this.loading = true
+    this.definition = await formService.getForm(9050, 992)
+    this.loading = false
+  },
+})
 </script>
 
 <style lang="scss">

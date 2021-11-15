@@ -7,11 +7,16 @@ import {
   FormElementValueChangeHandler,
   FormElementLookupHandler,
 } from "../types/form"
+import FormElementText from "@/form-elements/FormElementText.vue"
+
 export default Vue.extend({
+  components: {
+    FormElementText,
+  },
   props: {
     formId: Number,
-    element: Object as PropType<FormTypes.FormElement>,
-    value: { required: true },
+    elements: Array as PropType<FormTypes.FormElement[]>,
+    model: Object as PropType<Record<string, unknown>>,
     formElementValidation: {
       type: Object as PropType<FormElementValidation>,
       required: false,
@@ -26,9 +31,29 @@ export default Vue.extend({
     onChange: Object as PropType<FormElementValueChangeHandler>,
     onLookup: Object as PropType<FormElementLookupHandler>,
   },
+  mounted() {
+    // console.log(this.element)
+  },
+  methods: {
+    updateSubmission(input: unknown, name: string) {
+      this.$emit("updateSubmission", {
+        [name]: input || undefined,
+      })
+    },
+  },
 })
 </script>
 
 <template>
-  <div></div>
+  <div>
+    <template v-for="element of elements">
+      <FormElementText
+        :key="element.id"
+        v-if="element.type === 'text'"
+        :element="element"
+        :value="model[element.name]"
+        @updateSubmission="updateSubmission"
+      />
+    </template>
+  </div>
 </template>
