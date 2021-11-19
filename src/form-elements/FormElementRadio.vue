@@ -5,7 +5,7 @@ import { FormTypes } from "@oneblink/types"
 export default Vue.extend({
   props: {
     id: String,
-    element: Object as PropType<FormTypes.TextElement>,
+    element: Object as PropType<FormTypes.RadioButtonElement>,
     value: { required: true },
     displayValidationMessage: Boolean,
     validationMessage: { type: String, required: false },
@@ -26,18 +26,25 @@ export default Vue.extend({
   data look up
   element look up
   default value
-  min, max
-  regex
+  display as buttons
+  conditional options
+  option set
 */
 </script>
 
 <template>
-  <v-text-field
+  <v-radio-group
     outlined
     :label="element.label"
-    :value="value"
-    @input="updateSubmission"
+    value="value"
+    @change="updateSubmission"
     :disabled="element.readOnly"
-    :placeholder="element.placeholderValue"
-  />
+  >
+    <v-radio
+      v-for="option in element.options"
+      :key="option.id"
+      :label="option.label"
+      :value="option.value"
+    />
+  </v-radio-group>
 </template>

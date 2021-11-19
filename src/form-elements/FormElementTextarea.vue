@@ -5,7 +5,7 @@ import { FormTypes } from "@oneblink/types"
 export default Vue.extend({
   props: {
     id: String,
-    element: Object as PropType<FormTypes.TextElement>,
+    element: Object as PropType<FormTypes.TextareaElement>,
     value: { required: true },
     displayValidationMessage: Boolean,
     validationMessage: { type: String, required: false },
@@ -32,7 +32,7 @@ export default Vue.extend({
 </script>
 
 <template>
-  <v-text-field
+  <v-textarea
     outlined
     :label="element.label"
     :value="value"

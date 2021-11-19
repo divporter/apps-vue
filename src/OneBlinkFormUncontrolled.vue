@@ -20,6 +20,7 @@ export default Vue.extend({
   methods: {
     updateSubmission(newSubmission: Record<string, unknown>) {
       Vue.set(this, "submission", { ...this.submission, ...newSubmission })
+      console.log(JSON.stringify(this.submission, null, 2))
     },
   },
 })

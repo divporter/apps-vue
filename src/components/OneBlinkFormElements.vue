@@ -8,10 +8,18 @@ import {
   FormElementLookupHandler,
 } from "../types/form"
 import FormElementText from "@/form-elements/FormElementText.vue"
+import FormElementTextarea from "@/form-elements/FormElementTextarea.vue"
+import FormElementNumber from "@/form-elements/FormElementNumber.vue"
+import FormElementRadio from "@/form-elements/FormElementRadio.vue"
+import FormElementCheckBoxes from "@/form-elements/FormElementCheckBoxes.vue"
 
 export default Vue.extend({
   components: {
     FormElementText,
+    FormElementTextarea,
+    FormElementNumber,
+    FormElementRadio,
+    FormElementCheckBoxes,
   },
   props: {
     formId: Number,
@@ -35,9 +43,15 @@ export default Vue.extend({
     // console.log(this.element)
   },
   methods: {
-    updateSubmission(input: unknown, name: string) {
+    updateSubmission({
+      name,
+      value,
+    }: {
+      name: string
+      value: string | undefined
+    }) {
       this.$emit("updateSubmission", {
-        [name]: input || undefined,
+        [name]: value,
       })
     },
   },
@@ -50,6 +64,34 @@ export default Vue.extend({
       <FormElementText
         :key="element.id"
         v-if="element.type === 'text'"
+        :element="element"
+        :value="model[element.name]"
+        @updateSubmission="updateSubmission"
+      />
+      <FormElementTextarea
+        :key="element.id"
+        v-if="element.type === 'textarea'"
+        :element="element"
+        :value="model[element.name]"
+        @updateSubmission="updateSubmission"
+      />
+      <FormElementNumber
+        :key="element.id"
+        v-if="element.type === 'number'"
+        :element="element"
+        :value="model[element.name]"
+        @updateSubmission="updateSubmission"
+      />
+      <FormElementRadio
+        :key="element.id"
+        v-if="element.type === 'radio'"
+        :element="element"
+        :value="model[element.name]"
+        @updateSubmission="updateSubmission"
+      />
+      <FormElementCheckBoxes
+        :key="element.id"
+        v-if="element.type === 'checkboxes'"
         :element="element"
         :value="model[element.name]"
         @updateSubmission="updateSubmission"

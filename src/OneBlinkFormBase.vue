@@ -28,6 +28,8 @@ import { FormTypes } from "@oneblink/types"
 import PageFormElements from "@/components/PageFormElements.vue"
 import NavigationStep from "@/components/NavigationStep.vue"
 
+import generateFormElementsConditionallyShown from "./services/generate-form-elements-conditionally-shown"
+
 type DataProps = {
   currentPageId?: string
   isStepsHeaderActive: boolean
@@ -113,9 +115,18 @@ export default Vue.extend({
         ]
       }
     },
-    //TODO logic applied to pages
+    formElementsConditionallyShown() {
+      return generateFormElementsConditionallyShown(
+        this.definition.elements,
+        this.submission,
+        undefined
+      )
+    },
     visiblePages(): Array<FormTypes.PageElement> {
-      return this.pages
+      return this.pages.filter(
+        (pageElement) =>
+          !this.formElementsConditionallyShown?.[pageElement.id]?.isHidden
+      )
     },
     currentPage(): FormTypes.PageElement {
       const currentPageById = this.visiblePages.find((pageElement) => {

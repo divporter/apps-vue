@@ -1,7 +1,9 @@
 <template>
-  <div v-if="definition">
-    <OneBlinkForm :definition="definition" />
-  </div>
+  <v-app>
+    <div v-if="definition">
+      <OneBlinkForm :definition="definition" />
+    </div>
+  </v-app>
 </template>
 
 <script lang="ts">

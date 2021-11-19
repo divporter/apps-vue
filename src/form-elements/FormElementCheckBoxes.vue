@@ -5,13 +5,13 @@ import { FormTypes } from "@oneblink/types"
 export default Vue.extend({
   props: {
     id: String,
-    element: Object as PropType<FormTypes.TextElement>,
+    element: Object as PropType<FormTypes.RadioButtonElement>,
     value: { required: true },
     displayValidationMessage: Boolean,
     validationMessage: { type: String, required: false },
   },
   methods: {
-    updateSubmission(input: string) {
+    updateSubmission(input: string[]) {
       this.$emit("updateSubmission", {
         name: this.element.name,
         value: input || undefined,
@@ -26,18 +26,22 @@ export default Vue.extend({
   data look up
   element look up
   default value
-  min, max
-  regex
+  display as buttons
+  enable toggle all
+  conditional options
+  option set
 */
 </script>
 
 <template>
-  <v-text-field
-    outlined
-    :label="element.label"
-    :value="value"
-    @input="updateSubmission"
-    :disabled="element.readOnly"
-    :placeholder="element.placeholderValue"
-  />
+  <div>
+    <v-checkbox
+      v-for="option of element.options"
+      :key="option.id"
+      :label="option.label"
+      :value="option.value"
+      :input-value="value || []"
+      @change="updateSubmission"
+    />
+  </div>
 </template>
