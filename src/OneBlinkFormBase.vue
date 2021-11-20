@@ -29,12 +29,24 @@ import PageFormElements from "@/components/PageFormElements.vue"
 import NavigationStep from "@/components/NavigationStep.vue"
 
 import generateFormElementsConditionallyShown from "./services/generate-form-elements-conditionally-shown"
+import {
+  validateSubmission,
+  generateValidationSchema,
+} from "./services/form-validation"
+
+import {
+  FormElementsValidation,
+  // FormElementValueChangeHandler,
+  // FormSubmissionModel,
+  // SetFormSubmission,
+} from "./types/form"
 
 type DataProps = {
   currentPageId?: string
   isStepsHeaderActive: boolean
   visitedPageIds: string[]
   isDisplayingCurrentPageError: boolean
+  elementIdsWithLookupsExecuted: string[]
 }
 
 export default Vue.extend({
@@ -52,6 +64,7 @@ export default Vue.extend({
       isStepsHeaderActive: false,
       visitedPageIds: [],
       isDisplayingCurrentPageError: false,
+      elementIdsWithLookupsExecuted: [],
     }
   },
   mounted() {
@@ -149,6 +162,19 @@ export default Vue.extend({
     },
     isShowingMultiplePages(): boolean {
       return this.visiblePages.length > 1
+    },
+    validationSchema(): Record<string, unknown> {
+      return generateValidationSchema(
+        this.pages,
+        this.elementIdsWithLookupsExecuted
+      )
+    },
+    formElementsValidation(): FormElementsValidation | undefined {
+      return validateSubmission(
+        this.validationSchema,
+        this.submission,
+        this.formElementsConditionallyShown
+      )
     },
   },
 })
@@ -283,6 +309,8 @@ export default Vue.extend({
             :pageElement="page"
             :model="submission"
             :isActive="page.id === currentPageId"
+            :formElementsConditionallyShown="formElementsConditionallyShown"
+            :formElementsValidation="formElementsValidation"
             @updateSubmission="updateSubmission"
           />
         </div>

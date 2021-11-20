@@ -1,6 +1,10 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 import { FormTypes } from "@oneblink/types"
+import {
+  FormElementConditionallyShown,
+  FormElementsValidation,
+} from "../types/form"
 import OneBlinkFormElements from "@/components/OneBlinkFormElements.vue"
 
 export default Vue.extend({
@@ -12,6 +16,13 @@ export default Vue.extend({
     isActive: Boolean,
     pageElement: Object as PropType<FormTypes.PageElement>,
     model: Object as PropType<Record<string, unknown>>,
+    formElementsConditionallyShown: Object as PropType<
+      Record<string, FormElementConditionallyShown>
+    >,
+    formElementsValidation: {
+      type: Object as PropType<FormElementsValidation>,
+      required: false,
+    },
   },
   methods: {
     updateSubmission(newSubmission: Record<string, unknown>) {
@@ -28,6 +39,8 @@ export default Vue.extend({
       :formId="formId"
       :elements="pageElement.elements"
       :model="model"
+      :formElementsConditionallyShown="formElementsConditionallyShown"
+      :formElementsValidation="formElementsValidation"
       @updateSubmission="updateSubmission"
     />
   </div>
