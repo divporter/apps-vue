@@ -18,13 +18,11 @@
 //   submission: FormSubmissionModel
 //   setFormSubmission: SetFormSubmission
 // }
-
-// type Props = BaseProps &
-//   ControlledProps & {
-//     isReadOnly: boolean
-//   }
 import Vue, { PropType } from "vue"
+import { Component, ProvideReactive } from "vue-property-decorator"
 import { FormTypes } from "@oneblink/types"
+import { localisationService } from "@oneblink/apps"
+
 import PageFormElements from "@/components/PageFormElements.vue"
 import NavigationStep from "@/components/NavigationStep.vue"
 
@@ -32,24 +30,28 @@ import generateFormElementsConditionallyShown from "./services/generate-form-ele
 import {
   validateSubmission,
   generateValidationSchema,
+  checkSectionValidity,
 } from "./services/form-validation"
 
 import {
   FormElementsValidation,
+  FormElementsConditionallyShown,
   // FormElementValueChangeHandler,
   // FormSubmissionModel,
   // SetFormSubmission,
 } from "./types/form"
 
+import eventBus from "@/services/event-bus"
+
 type DataProps = {
   currentPageId?: string
   isStepsHeaderActive: boolean
   visitedPageIds: string[]
-  isDisplayingCurrentPageError: boolean
+  hasAttemptedSubmit: boolean
   elementIdsWithLookupsExecuted: string[]
 }
 
-export default Vue.extend({
+const OneBlinkFormBaseBase = Vue.extend({
   components: {
     PageFormElements,
     NavigationStep,
@@ -57,18 +59,36 @@ export default Vue.extend({
   props: {
     definition: Object as PropType<FormTypes.Form>,
     submission: Object as PropType<Record<string, unknown>>,
+    isReadOnly: Boolean,
   },
   data(): DataProps {
     return {
       currentPageId: undefined,
       isStepsHeaderActive: false,
       visitedPageIds: [],
-      isDisplayingCurrentPageError: false,
+      hasAttemptedSubmit: false,
       elementIdsWithLookupsExecuted: [],
     }
   },
   mounted() {
     this.setPageId(this.pages[0].id)
+
+    eventBus.$on("OneBlinkFormBase-executedLookup", (id: string) => {
+      if (!this.elementIdsWithLookupsExecuted.includes(id)) {
+        this.elementIdsWithLookupsExecuted.push(id)
+      }
+    })
+
+    eventBus.$on("OneBlinkFormBase-executeLookupFailed", (id: string) => {
+      this.elementIdsWithLookupsExecuted =
+        this.elementIdsWithLookupsExecuted.filter(
+          (elementId) => elementId === id
+        )
+    })
+  },
+  beforeDestroy() {
+    eventBus.$off("OneBlinkFormBase-executedLookup")
+    eventBus.$off("OneBlinkFormBase-executeLookupFailed")
   },
   methods: {
     updateSubmission(newSubmission: Record<string, unknown>) {
@@ -99,6 +119,15 @@ export default Vue.extend({
         })
       }
     },
+    checkDisplayPageError(page: FormTypes.PageElement) {
+      // If we have not visited the page yet, we will not display errors
+      if (!this.visitedPageIds.includes(page.id)) {
+        return false
+      }
+
+      return checkSectionValidity(page, this.formElementsValidation)
+    },
+    formatDatetimeLong: localisationService.formatDatetimeLong,
   },
   computed: {
     pages(): Array<FormTypes.PageElement> {
@@ -128,12 +157,22 @@ export default Vue.extend({
         ]
       }
     },
-    formElementsConditionallyShown() {
+    formElementsConditionallyShownResult(): {
+      formElementsConditionallyShown: FormElementsConditionallyShown
+      conditionalLogicError?: Error
+    } {
       return generateFormElementsConditionallyShown(
         this.definition.elements,
         this.submission,
         undefined
       )
+    },
+    formElementsConditionallyShown(): FormElementsConditionallyShown {
+      return this.formElementsConditionallyShownResult
+        .formElementsConditionallyShown
+    },
+    conditionalLogicError(): Error | undefined {
+      return this.formElementsConditionallyShownResult.conditionalLogicError
     },
     visiblePages(): Array<FormTypes.PageElement> {
       return this.pages.filter(
@@ -163,6 +202,7 @@ export default Vue.extend({
     isShowingMultiplePages(): boolean {
       return this.visiblePages.length > 1
     },
+
     validationSchema(): Record<string, unknown> {
       return generateValidationSchema(
         this.pages,
@@ -176,146 +216,146 @@ export default Vue.extend({
         this.formElementsConditionallyShown
       )
     },
+    isDisplayingCurrentPageError(): boolean {
+      return this.checkDisplayPageError(this.currentPage)
+    },
+    computedIsReadOnly(): boolean {
+      return this.isReadOnly
+    },
   },
 })
+
+@Component
+export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
+  //@ts-expect-error dun worry about it
+  @ProvideReactive() definition: FormTypes.Form = this.definition
+  @ProvideReactive() formIsReadOnly: boolean = this.isReadOnly
+}
 </script>
 
 <template>
-  <div class="ob-form-container" ref="obFormContainerHTMLElementRef">
-    <form
-      name="obForm"
-      :class="[
-        'ob-form',
-        'cypress-ob-form',
-        'ob-form__page' + (currentPageIndex + 1),
-      ]"
-      noValidate
-      onSubmit="handleSubmit"
-    >
-      <div>
-        <div ref="scrollToTopOfPageHTMLElementRef" />
-        <div
-          v-if="isShowingMultiplePages"
-          :class="{
-            'ob-steps-navigation': true,
-            'is-active': isStepsHeaderActive,
-          }"
-        >
+  <div>
+    <div v-if="conditionalLogicError" class="has-text-centered">
+      <i class="material-icons has-text-warning icon-x-large">error</i>
+      <h3 class="title is-3">Bad Form Configuration</h3>
+      <p class="cypress-conditional-logic-error-message">
+        {{ conditionalLogicError.message }}
+      </p>
+      <p class="has-text-grey">
+        {{ formatDatetimeLong(new Date()) }}
+      </p>
+    </div>
+    <div class="ob-form-container" ref="obFormContainerHTMLElementRef">
+      <form
+        name="obForm"
+        :class="[
+          'ob-form',
+          'cypress-ob-form',
+          'ob-form__page' + (currentPageIndex + 1),
+        ]"
+        noValidate
+        onSubmit="handleSubmit"
+      >
+        <div>
+          <div ref="scrollToTopOfPageHTMLElementRef" />
           <div
+            v-if="isShowingMultiplePages"
             :class="{
-              'ob-steps-navigation__header': true,
+              'ob-steps-navigation': true,
               'is-active': isStepsHeaderActive,
             }"
-            @click="toggleStepsNavigation"
           >
-            <span class="icon is-invisible">
-              <i class="material-icons">keyboard_arrow_down</i>
-            </span>
-            <div class="steps-header-active-page">
-              <span v-if="isDisplayingCurrentPageError" class="icon">
-                <i class="material-icons has-text-danger is-size-4">
-                  warning
-                </i>
+            <div
+              :class="{
+                'ob-steps-navigation__header': true,
+                'is-active': isStepsHeaderActive,
+              }"
+              @click="toggleStepsNavigation"
+            >
+              <span class="icon is-invisible">
+                <i class="material-icons">keyboard_arrow_down</i>
               </span>
+              <div class="steps-header-active-page">
+                <span v-if="isDisplayingCurrentPageError" class="icon">
+                  <i class="material-icons has-text-danger is-size-4">
+                    warning
+                  </i>
+                </span>
 
-              <span v-else class="steps-header-active-page-icon">
-                {{ currentPageNumber }}
-              </span>
-              <span
-                class="steps-header-active-page-label cypress-tablet-step-title"
-              >
-                {{ currentPage ? currentPage.label : "" }}
+                <span v-else class="steps-header-active-page-icon">
+                  {{ currentPageNumber }}
+                </span>
+                <span
+                  class="
+                    steps-header-active-page-label
+                    cypress-tablet-step-title
+                  "
+                >
+                  {{ currentPage ? currentPage.label : "" }}
+                </span>
+              </div>
+              <span class="dropdown icon">
+                <i class="material-icons">keyboard_arrow_down</i>
               </span>
             </div>
-            <span class="dropdown icon">
-              <i class="material-icons">keyboard_arrow_down</i>
-            </span>
+            <!-- navigation steps in here -->
+            <div
+              :class="{
+                'ob-steps-navigation__steps': true,
+                'is-active': isStepsHeaderActive,
+              }"
+            >
+              <div class="steps is-small is-horizontal-tablet cypress-steps">
+                <NavigationStep
+                  v-for="(page, index) of visiblePages"
+                  :key="page.id"
+                  :page="page"
+                  :currentPage="currentPage"
+                  :currentPageIndex="currentPageIndex"
+                  :index="index"
+                  :hasErrors="checkDisplayPageError(page)"
+                  @setPageId="setPageId"
+                />
+              </div>
+            </div>
           </div>
-          <!-- navigation steps in here -->
           <div
             :class="{
-              'ob-steps-navigation__steps': true,
+              'ob-steps-navigation__background': true,
               'is-active': isStepsHeaderActive,
             }"
-          >
-            <div class="steps is-small is-horizontal-tablet cypress-steps">
-              <!--TODO const hasErrors = checkDisplayPageError(page) -->
-              <NavigationStep
-                v-for="(page, index) of visiblePages"
-                :key="page.id"
-                :page="page"
-                :currentPage="currentPage"
-                :currentPageIndex="currentPageIndex"
-                :index="index"
-                :hasErrors="false"
-                @setPageId="setPageId"
-              >
-                <div
-                  class="
-                    step-marker step-marker-error
-                    ob-step-marker
-                    cypress-step-marker
-                  "
-                  :name="'cypress-page-stepper' + (index + 1)"
-                  :value="index + 1"
-                >
-                  <!-- TODO v-if hasErrors -->
-                  <v-tool-tip title="Page has errors">
-                    <span
-                      class="icon tooltip has-tooltip-top cypress-page-error"
-                    >
-                      <i class="material-icons has-text-danger is-size-3">
-                        warning
-                      </i>
-                    </span>
-                  </v-tool-tip>
-                  <!-- TODO v-else -->
-                  <span>{{ index + 1 }}</span>
-                </div>
-                <div class="step-details ob-step-details">
-                  <p
-                    class="step-title ob-step-title cypress-desktop-step-title"
-                  >
-                    {{ page.label }}
-                  </p>
-                </div>
-              </NavigationStep>
-            </div>
-          </div>
-        </div>
-        <div
-          :class="{
-            'ob-steps-navigation__background': true,
-            'is-active': isStepsHeaderActive,
-          }"
-          @click="
-            {
-              toggleStepsNavigation
-            }
-          "
-        />
-      </div>
-      <div className="steps">
-        <div
-          :class="{
-            'steps-content': true,
-            'is-single-step': !isShowingMultiplePages,
-          }"
-        >
-          <PageFormElements
-            v-for="page of pages"
-            :key="page.id"
-            :formId="definition.id"
-            :pageElement="page"
-            :model="submission"
-            :isActive="page.id === currentPageId"
-            :formElementsConditionallyShown="formElementsConditionallyShown"
-            :formElementsValidation="formElementsValidation"
-            @updateSubmission="updateSubmission"
+            @click="
+              {
+                toggleStepsNavigation
+              }
+            "
           />
         </div>
-        <!-- next/previous buttons go here -->
-      </div>
-    </form>
+        <div className="steps">
+          <div
+            :class="{
+              'steps-content': true,
+              'is-single-step': !isShowingMultiplePages,
+            }"
+          >
+            <PageFormElements
+              v-for="page of pages"
+              :key="page.id"
+              :definition="definition"
+              :pageElement="page"
+              :model="submission"
+              :isActive="page.id === currentPageId"
+              :formElementsConditionallyShown="formElementsConditionallyShown"
+              :formElementsValidation="formElementsValidation"
+              :displayValidationMessages="
+                hasAttemptedSubmit || isDisplayingCurrentPageError
+              "
+              @updateSubmission="updateSubmission"
+            />
+          </div>
+          <!-- next/previous buttons go here -->
+        </div>
+      </form>
+    </div>
   </div>
 </template>

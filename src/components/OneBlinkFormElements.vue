@@ -14,14 +14,13 @@ export default Vue.extend({
     FormElement,
   },
   props: {
-    formId: Number,
     elements: Array as PropType<FormTypes.FormElement[]>,
     model: Object as PropType<Record<string, unknown>>,
     formElementsValidation: {
       type: Object as PropType<FormElementsValidation>,
       required: false,
     },
-    displayValidationMessage: Boolean,
+    displayValidationMessages: Boolean,
     formElementsConditionallyShown: {
       type: Object as PropType<FormElementConditionallyShown>,
       required: false,
@@ -55,12 +54,14 @@ export default Vue.extend({
           !formElementsConditionallyShown[element.name].isHidden
         "
         :element="element"
+        :model="model"
         :value="model[element.name]"
         :formElementValidation="
           formElementsValidation
             ? formElementsValidation[element.name]
             : undefined
         "
+        :displayValidationMessage="displayValidationMessages"
         @updateSubmission="updateSubmission"
       >
       </FormElement>

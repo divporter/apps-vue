@@ -2,10 +2,12 @@
 import Vue, { PropType } from "vue"
 import { FormTypes } from "@oneblink/types"
 import FormElementLabelContainer from "@/components/FormElementLabelContainer.vue"
+import LookupButton from "@/components/LookupButton.vue"
 
 export default Vue.extend({
   components: {
     FormElementLabelContainer,
+    LookupButton,
   },
   props: {
     id: String,
@@ -40,13 +42,11 @@ export default Vue.extend({
     setIsDirty() {
       this.isDirty = true
     },
+    triggerLookup() {
+      this.$emit("triggerLookup", this.value)
+    },
   },
 })
-
-/* TODO 
-  data look up
-  element look up
-*/
 </script>
 
 <template>
@@ -79,13 +79,13 @@ export default Vue.extend({
             text="{text}"
           />
         </div>
-
-        <!-- 
-          TODO <LookupButton
-            isInputButton
-            value={value}
-            validationMessage={validationMessage}
-          /> -->
+        <LookupButton
+          isInputButton
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          @click="triggerLookup"
+        />
       </div>
       <div
         v-if="isDisplayingValidationMessage || !!element.maxLength"

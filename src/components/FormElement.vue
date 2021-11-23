@@ -6,6 +6,7 @@ import {
   FormElementConditionallyShown,
 } from "../types/form"
 
+import LookupNotification from "@/components/LookupNotification.vue"
 import FormElementText from "@/form-elements/FormElementText.vue"
 import FormElementTextarea from "@/form-elements/FormElementTextarea.vue"
 import FormElementNumber from "@/form-elements/FormElementNumber.vue"
@@ -14,6 +15,7 @@ import FormElementCheckBoxes from "@/form-elements/FormElementCheckBoxes.vue"
 
 export default Vue.extend({
   components: {
+    LookupNotification,
     FormElementText,
     FormElementTextarea,
     FormElementNumber,
@@ -21,8 +23,8 @@ export default Vue.extend({
     FormElementCheckBoxes,
   },
   props: {
-    formId: Number,
     element: Object as PropType<FormTypes.FormElement>,
+    model: Object as PropType<Record<string, unknown>>,
     value: { required: false },
     formElementValidation: {
       type: String as PropType<FormElementValidation>,
@@ -50,7 +52,7 @@ export default Vue.extend({
     },
   },
   computed: {
-    validationMessage() {
+    validationMessage(): string | undefined {
       return this.formElementValidation &&
         typeof this.formElementValidation === "string"
         ? this.formElementValidation
@@ -62,14 +64,21 @@ export default Vue.extend({
 
 <template>
   <div>
-    <FormElementText
-      :key="element.id"
-      v-if="element.type === 'text'"
-      :element="element"
-      :value="value"
-      :validationMessage="validationMessage"
-      @updateSubmission="updateSubmission"
-    />
+    <!-- TODO use a real value for formIsReadOnly -->
+    <LookupNotification :element="element" :model="model">
+      <template v-slot:default="{ triggerLookup }">
+        <FormElementText
+          :key="element.id"
+          v-if="element.type === 'text'"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          @updateSubmission="updateSubmission"
+          @triggerLookup="triggerLookup"
+        />
+      </template>
+    </LookupNotification>
     <FormElementTextarea
       :key="element.id"
       v-if="element.type === 'textarea'"

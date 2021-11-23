@@ -10,6 +10,7 @@ export default Vue.extend({
   },
   props: {
     definition: Object as PropType<FormTypes.Form>,
+    isReadOnly: Boolean,
   },
   data() {
     return {
@@ -31,5 +32,6 @@ export default Vue.extend({
     :definition="definition"
     :submission="submission"
     @updateSubmission="updateSubmission"
+    :isReadOnly="isReadOnly"
   />
 </template>

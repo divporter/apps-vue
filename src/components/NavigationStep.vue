@@ -37,11 +37,18 @@ export default Vue.extend({
       :name="'cypress-page-stepper' + (index + 1)"
       :value="index + 1"
     >
-      <v-tool-tip v-if="hasErrors" title="Page has errors">
-        <span class="icon tooltip has-tooltip-top cypress-page-error">
-          <i class="material-icons has-text-danger is-size-3"> warning </i>
-        </span>
-      </v-tool-tip>
+      <v-tooltip v-if="hasErrors">
+        <template v-slot:activator="{ on, attrs }">
+          <span
+            class="icon tooltip has-tooltip-top cypress-page-error"
+            v-bind="attrs"
+            v-on="on"
+          >
+            <i class="material-icons has-text-danger is-size-3"> warning </i>
+          </span>
+        </template>
+        Page has errors
+      </v-tooltip>
       <span v-else>{{ index + 1 }}</span>
     </div>
     <div class="step-details ob-step-details">
