@@ -334,7 +334,7 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
             "
           />
         </div>
-        <div className="steps">
+        <div class="steps">
           <div
             :class="{
               'steps-content': true,

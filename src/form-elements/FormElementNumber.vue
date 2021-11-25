@@ -66,7 +66,7 @@ export default Vue.extend({
 </script>
 
 <template>
-  <div clas="cypress-number-element">
+  <div class="cypress-number-element">
     <FormElementLabelContainer
       class="ob-number"
       :id="id"
@@ -138,9 +138,7 @@ export default Vue.extend({
         role="alert"
         class="has-margin-top-8"
       >
-        <div
-          className="has-text-danger ob-error__text cypress-validation-message"
-        >
+        <div class="has-text-danger ob-error__text cypress-validation-message">
           {{ validationMessage }}
         </div>
       </div>

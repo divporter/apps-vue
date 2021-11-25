@@ -55,7 +55,7 @@ export default Vue.extend({
 <template>
   <div class="cypress-text-element">
     <FormElementLabelContainer
-      className="ob-text"
+      class="ob-text"
       :id="id"
       :element="element"
       :required="element.required"
@@ -77,7 +77,7 @@ export default Vue.extend({
         </div>
         <div class="control" v-if="!!element.readOnly && !!value">
           <CopyToClipboardButton
-            className="button is-input-addon cypress-copy-to-clipboard-button"
+            class="button is-input-addon cypress-copy-to-clipboard-button"
             isInputButton
             text="{text}"
           />
@@ -98,7 +98,7 @@ export default Vue.extend({
         role="alert"
         class="has-margin-top-8"
       >
-        <div clas="is-flex is-justify-content-space-between">
+        <div class="is-flex is-justify-content-space-between">
           <div
             v-if="isDisplayingValidationMessage"
             class="has-text-danger ob-error__text cypress-validation-message"
