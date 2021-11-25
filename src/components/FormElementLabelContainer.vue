@@ -22,11 +22,11 @@ export default Vue.extend({
           'ob-label__required': required,
           'is-required': required,
         }"
-        for="{id}"
+        :for="id"
       >
         {{ element.label }}
       </label>
-      <v-tooltip v-if="element.hint">
+      <v-tooltip v-if="element.hint" top>
         <template v-slot:activator="{ on, attrs }">
           <i
             class="material-icons has-text-grey-light ob-label__hint"

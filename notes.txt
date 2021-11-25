@@ -1,2 +1,1 @@
 https://5balloons.info/create-publish-you-first-vue-plugin-on-npm-the-right-way/
-https://www.npmjs.com/package/vue-frag

@@ -225,7 +225,7 @@ export default function generateFormElementsConditionallyShown(
                             element,
                             option
                           )
-                        if (error){
+                        if (error) {
                           conditionalLogicError = error
                         }
                         return conditionallyShowOption

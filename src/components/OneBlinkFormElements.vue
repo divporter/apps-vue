@@ -1,6 +1,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 import { FormTypes } from "@oneblink/types"
+import { Fragment } from "vue-frag"
 import {
   FormElementsValidation,
   FormElementConditionallyShown,
@@ -12,6 +13,7 @@ import FormElement from "@/components/FormElement.vue"
 export default Vue.extend({
   components: {
     FormElement,
+    Fragment,
   },
   props: {
     elements: Array as PropType<FormTypes.FormElement[]>,
@@ -42,7 +44,7 @@ export default Vue.extend({
 </script>
 
 <template>
-  <div>
+  <Fragment>
     <template v-for="element of elements">
       <FormElement
         :key="element.id"
@@ -56,6 +58,7 @@ export default Vue.extend({
         :element="element"
         :model="model"
         :value="model[element.name]"
+        :name="element.name"
         :formElementValidation="
           formElementsValidation
             ? formElementsValidation[element.name]
@@ -66,5 +69,5 @@ export default Vue.extend({
       >
       </FormElement>
     </template>
-  </div>
+  </Fragment>
 </template>

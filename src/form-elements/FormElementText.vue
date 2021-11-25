@@ -3,11 +3,13 @@ import Vue, { PropType } from "vue"
 import { FormTypes } from "@oneblink/types"
 import FormElementLabelContainer from "@/components/FormElementLabelContainer.vue"
 import LookupButton from "@/components/LookupButton.vue"
+import CopyToClipboardButton from "@/components/CopyToClipboardButton.vue"
 
 export default Vue.extend({
   components: {
     FormElementLabelContainer,
     LookupButton,
+    CopyToClipboardButton,
   },
   props: {
     id: String,
@@ -15,6 +17,7 @@ export default Vue.extend({
     value: { required: true },
     displayValidationMessage: Boolean,
     validationMessage: { type: String, required: false },
+    isLookup: Boolean,
   },
   data() {
     return {
@@ -79,13 +82,16 @@ export default Vue.extend({
             text="{text}"
           />
         </div>
-        <LookupButton
-          isInputButton
-          :element="element"
-          :value="value"
-          :validationMessage="validationMessage"
-          @click="triggerLookup"
-        />
+        <div class="control">
+          <LookupButton
+            v-if="isLookup"
+            isInputButton
+            :element="element"
+            :value="value"
+            :validationMessage="validationMessage"
+            @click="triggerLookup"
+          />
+        </div>
       </div>
       <div
         v-if="isDisplayingValidationMessage || !!element.maxLength"

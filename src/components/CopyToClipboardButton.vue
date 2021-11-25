@@ -22,6 +22,6 @@ export default Vue.extend({
     <span class="icon">
       <i class="material-icons">file_copy</i>
     </span>
-    <span class="{'is-hidden-mobile' : isInputButton}"> &nbsp;Copy </span>
+    <span :class="{ 'is-hidden-mobile': isInputButton }"> &nbsp;Copy </span>
   </button>
 </template>

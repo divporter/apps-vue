@@ -15,6 +15,8 @@ import { FormSubmissionModel } from "../types/form"
 import { MergeLookupResults } from "../types/lookups"
 import eventBus from "@/services/event-bus"
 
+import OnLoading from "@/components/OnLoading.vue"
+
 type DataProps = {
   isLookingUp: boolean
   hasLookupFailed: boolean
@@ -32,6 +34,9 @@ type LookupCallback = ({
 }: MergeLookupResults) => MergeLookupResults
 
 const LookupNotificationBase = Vue.extend({
+  components: {
+    OnLoading,
+  },
   props: {
     autoLookupValue: {
       required: false,
@@ -67,6 +72,9 @@ const LookupNotificationBase = Vue.extend({
       return this.stringifyAutoLookupValue
         ? this.stringifyAutoLookupValue(this.autoLookupValue)
         : this.autoLookupValue
+    },
+    isLookup(): boolean {
+      return this.element.isDataLookup || this.element.isElementLookup
     },
   },
 })
@@ -298,7 +306,10 @@ export default class LookupNotification extends LookupNotificationBase {
 
 <template>
   <div>
-    <slot v-bind:triggerLookup="triggerLookup"></slot>
+    <slot
+      v-bind:triggerLookup="triggerLookup"
+      v-bind:isLookup="isLookup"
+    ></slot>
     <div
       :class="{
         'ob-lookup__notification': true,
@@ -339,12 +350,7 @@ export default class LookupNotification extends LookupNotificationBase {
         >
           check_circle_outline
         </i>
-        <!--TODO OnLoading -->
-        <!-- <OnLoading v-if="!hasLookupSucceeded && !hasLookupFailed" small /> -->
-        <span v-if="!hasLookupSucceeded && !hasLookupFailed" small
-          >Loading</span
-        >
-
+        <OnLoading v-if="!hasLookupSucceeded && !hasLookupFailed" small />
         <div
           v-if="isCancellable && !hasLookupSucceeded && !hasLookupFailed"
           class="has-margin-top-5 fade-in"

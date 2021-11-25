@@ -22,6 +22,7 @@ import Vue, { PropType } from "vue"
 import { Component, ProvideReactive } from "vue-property-decorator"
 import { FormTypes } from "@oneblink/types"
 import { localisationService } from "@oneblink/apps"
+import { Fragment } from "vue-frag"
 
 import PageFormElements from "@/components/PageFormElements.vue"
 import NavigationStep from "@/components/NavigationStep.vue"
@@ -55,6 +56,7 @@ const OneBlinkFormBaseBase = Vue.extend({
   components: {
     PageFormElements,
     NavigationStep,
+    Fragment,
   },
   props: {
     definition: Object as PropType<FormTypes.Form>,
@@ -234,7 +236,7 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
 </script>
 
 <template>
-  <div>
+  <Fragment>
     <div v-if="conditionalLogicError" class="has-text-centered">
       <i class="material-icons has-text-warning icon-x-large">error</i>
       <h3 class="title is-3">Bad Form Configuration</h3>
@@ -245,6 +247,7 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
         {{ formatDatetimeLong(new Date()) }}
       </p>
     </div>
+    <!-- TODO loadDynamicOptionsState -->
     <div class="ob-form-container" ref="obFormContainerHTMLElementRef">
       <form
         name="obForm"
@@ -357,5 +360,5 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
         </div>
       </form>
     </div>
-  </div>
+  </Fragment>
 </template>

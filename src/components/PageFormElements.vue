@@ -80,7 +80,15 @@ export default class PageFormElements extends PageFormElementsBase {
 </script>
 
 <template>
-  <div>
+  <div
+    :class="{
+      'ob-page': true,
+      'step-content': true,
+      'is-active': true,
+      'cypress-page': true,
+      'is-invisible': !isActive,
+    }"
+  >
     <OneBlinkFormElements
       v-show="isActive"
       :definition="definition"

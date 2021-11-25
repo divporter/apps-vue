@@ -1,15 +1,15 @@
-import { FormTypes } from '@oneblink/types'
-import { conditionalLogicService } from '@oneblink/sdk-core'
+import { FormTypes } from "@oneblink/types"
+import { conditionalLogicService } from "@oneblink/sdk-core"
 
 import conditionallyShowElement, {
   FormElementsCtrl,
-} from '../services/conditionally-show-element'
-import { FormSubmissionModel } from '../types/form'
+} from "../services/conditionally-show-element"
+import { FormSubmissionModel } from "../types/form"
 
 const handleAttributePredicate = (
   predicate: FormTypes.ChoiceElementOptionAttribute,
   model: FormSubmissionModel,
-  predicateElement: FormTypes.FormElementWithOptions,
+  predicateElement: FormTypes.FormElementWithOptions
 ) => {
   const values = model[predicateElement.name]
   if (!values) return true
@@ -17,14 +17,14 @@ const handleAttributePredicate = (
   if (
     Array.isArray(values) &&
     (!values.length ||
-      !values.filter((value) => typeof value !== 'undefined').length)
+      !values.filter((value) => typeof value !== "undefined").length)
   ) {
     return true
   }
 
   return conditionalLogicService.evaluateConditionalOptionsPredicate({
     predicate: {
-      type: 'OPTIONS',
+      type: "OPTIONS",
       elementId: predicate.elementId,
       optionIds: predicate.optionIds,
     },
@@ -36,7 +36,7 @@ const handleAttributePredicate = (
 const conditionallyShowOptionByPredicate = (
   formElementsCtrl: FormElementsCtrl,
   predicate: FormTypes.ChoiceElementOptionAttribute,
-  elementsEvaluated: string[],
+  elementsEvaluated: string[]
 ): boolean => {
   // Validate the predicate data, if it is invalid,
   // we will always show the field
@@ -52,7 +52,7 @@ const conditionallyShowOptionByPredicate = (
   const predicateElement = formElementsCtrl.flattenedElements.find(
     (element) => {
       return element.id === predicate.elementId
-    },
+    }
   )
 
   // If we cant find the element used for the predicate,
@@ -64,7 +64,7 @@ const conditionallyShowOptionByPredicate = (
       return conditionallyShowOptionByPredicate(
         formElementsCtrl.parentFormElementsCtrl,
         predicate,
-        elementsEvaluated,
+        elementsEvaluated
       )
     } else {
       return false
@@ -72,11 +72,11 @@ const conditionallyShowOptionByPredicate = (
   }
 
   if (
-    predicateElement.type !== 'compliance' &&
-    predicateElement.type !== 'select' &&
-    predicateElement.type !== 'autocomplete' &&
-    predicateElement.type !== 'checkboxes' &&
-    predicateElement.type !== 'radio'
+    predicateElement.type !== "compliance" &&
+    predicateElement.type !== "select" &&
+    predicateElement.type !== "autocomplete" &&
+    predicateElement.type !== "checkboxes" &&
+    predicateElement.type !== "radio"
   ) {
     return false
   }
@@ -86,7 +86,7 @@ const conditionallyShowOptionByPredicate = (
   // Unless the predicate element has dynamic options and
   // options have not been fetched yet.
   if (!Array.isArray(predicateElement.options)) {
-    return predicateElement.optionsType !== 'DYNAMIC'
+    return predicateElement.optionsType !== "DYNAMIC"
   }
 
   const everyOptionIsShowing = predicate.optionIds.every((id) => {
@@ -97,7 +97,7 @@ const conditionallyShowOptionByPredicate = (
       { model: formElementsCtrl.model, flattenedElements: [] },
       predicateElement,
       predicateOption,
-      elementsEvaluated,
+      elementsEvaluated
     )
   })
 
@@ -109,19 +109,19 @@ const conditionallyShowOptionByPredicate = (
   return handleAttributePredicate(
     predicate,
     formElementsCtrl.model,
-    predicateElement,
+    predicateElement
   )
 }
 
 const isAttributeFilterValid = (
   formElementsCtrl: FormElementsCtrl,
   predicate: FormTypes.ChoiceElementOptionAttribute,
-  elementsEvaluated: string[],
+  elementsEvaluated: string[]
 ): boolean => {
   const predicateElement = formElementsCtrl.flattenedElements.find(
     (element) => {
       return element.id === predicate.elementId
-    },
+    }
   )
 
   // If we cant find the element used for the predicate,
@@ -133,7 +133,7 @@ const isAttributeFilterValid = (
       return isAttributeFilterValid(
         formElementsCtrl.parentFormElementsCtrl,
         predicate,
-        elementsEvaluated,
+        elementsEvaluated
       )
     } else {
       return false
@@ -144,8 +144,8 @@ const isAttributeFilterValid = (
   // is not hidden
   if (
     // Will never be a page, just making typescript happy :)
-    predicateElement.type === 'page' ||
-    predicateElement.type === 'section' ||
+    predicateElement.type === "page" ||
+    predicateElement.type === "section" ||
     !conditionallyShowElement(formElementsCtrl, predicateElement, [])
   ) {
     return false
@@ -158,7 +158,7 @@ const isAttributeFilterValid = (
   if (
     Array.isArray(values) &&
     (!values.length ||
-      !values.filter((value) => typeof value !== 'undefined').length)
+      !values.filter((value) => typeof value !== "undefined").length)
   ) {
     return false
   }
@@ -170,7 +170,7 @@ export default function conditionallyShowOption(
   formElementsCtrl: FormElementsCtrl,
   elementToEvaluate: FormTypes.FormElementWithOptions,
   optionToEvaluate: FormTypes.ChoiceElementOption,
-  optionsEvaluated: string[],
+  optionsEvaluated: string[]
 ): boolean {
   // If the element does not have the `conditionallyShow` flag set,
   // we can always show the element.
@@ -189,7 +189,7 @@ export default function conditionallyShowOption(
   // if the element should be shown based on parent element conditional logic
   if (optionsEvaluated.some((optionId) => optionId === optionToEvaluate.id)) {
     throw new Error(
-      'Your conditional logic has caused an infinite loop. Check the following Fields to ensure element A does not rely on element B if element B also relies on element A.',
+      "Your conditional logic has caused an infinite loop. Check the following Fields to ensure element A does not rely on element B if element B also relies on element A."
     )
   } else {
     optionsEvaluated.push(optionToEvaluate.id)
@@ -200,9 +200,9 @@ export default function conditionallyShowOption(
       return isAttributeFilterValid(
         formElementsCtrl,
         predicate,
-        optionsEvaluated,
+        optionsEvaluated
       )
-    },
+    }
   )
 
   if (!validPredicates.length) return true
@@ -210,7 +210,7 @@ export default function conditionallyShowOption(
     conditionallyShowOptionByPredicate(
       formElementsCtrl,
       predicate,
-      optionsEvaluated,
-    ),
+      optionsEvaluated
+    )
   )
 }

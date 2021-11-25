@@ -55,6 +55,6 @@ export default class LookupButton extends LookupButtonBase {
     <span class="icon">
       <i class="material-icons">search</i>
     </span>
-    <span class="{'is-hidden-mobile': isInputButton}"> &nbsp;Lookup </span>
+    <span :class="{ 'is-hidden-mobile': isInputButton }"> &nbsp;Lookup </span>
   </button>
 </template>

@@ -26,6 +26,7 @@ export default Vue.extend({
     element: Object as PropType<FormTypes.FormElement>,
     model: Object as PropType<Record<string, unknown>>,
     value: { required: false },
+    name: String,
     formElementValidation: {
       type: String as PropType<FormElementValidation>,
       required: false,
@@ -63,36 +64,66 @@ export default Vue.extend({
 </script>
 
 <template>
-  <div>
-    <!-- TODO use a real value for formIsReadOnly -->
-    <LookupNotification :element="element" :model="model">
-      <template v-slot:default="{ triggerLookup }">
+  <div
+    :key="element.id"
+    class="ob-element cypress-element-container"
+    :data-cypress-element-name="name"
+    :data-ob-name="name"
+  >
+    <LookupNotification
+      :element="element"
+      :model="model"
+      v-if="element.type === 'text'"
+    >
+      <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementText
           :key="element.id"
-          v-if="element.type === 'text'"
           :element="element"
           :value="value"
           :validationMessage="validationMessage"
           :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
           @updateSubmission="updateSubmission"
           @triggerLookup="triggerLookup"
         />
       </template>
     </LookupNotification>
-    <FormElementTextarea
-      :key="element.id"
+    <LookupNotification
+      :element="element"
+      :model="model"
       v-if="element.type === 'textarea'"
+    >
+      <template v-slot:default="{ triggerLookup, isLookup}">
+        <FormElementTextarea
+          :key="element.id"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          @updateSubmission="updateSubmission"
+          @triggerLookup="triggerLookup"
+        />
+      </template>
+    </LookupNotification>
+    <LookupNotification
       :element="element"
-      :value="value"
-      @updateSubmission="updateSubmission"
-    />
-    <FormElementNumber
-      :key="element.id"
+      :model="model"
       v-if="element.type === 'number'"
-      :element="element"
-      :value="value"
-      @updateSubmission="updateSubmission"
-    />
+    >
+      <template v-slot:default="{ triggerLookup, isLookup }">
+        <FormElementNumber
+          :key="element.id"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          @updateSubmission="updateSubmission"
+          @triggerLookup="triggerLookup"
+        />
+      </template>
+    </LookupNotification>
     <FormElementRadio
       :key="element.id"
       v-if="element.type === 'radio'"

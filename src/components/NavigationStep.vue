@@ -28,7 +28,7 @@ export default Vue.extend({
       'cypress-step-item': true,
       'is-active': currentPage.id === page.id,
       'is-completed': currentPageIndex > index,
-      'is-error': false,
+      'is-error': hasErrors,
     }"
     @click.stop="onClick"
   >
