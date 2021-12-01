@@ -1,20 +1,21 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
+
+import CopyToClipboardButton from "@/components/CopyToClipboardButton.vue"
+import LookupButton from "@/components/LookupButton.vue"
 import { FormTypes } from "@oneblink/types"
 import FormElementLabelContainer from "@/components/FormElementLabelContainer.vue"
-import LookupButton from "@/components/LookupButton.vue"
-import CopyToClipboardButton from "@/components/CopyToClipboardButton.vue"
 
 export default Vue.extend({
   components: {
-    FormElementLabelContainer,
-    LookupButton,
     CopyToClipboardButton,
+    LookupButton,
+    FormElementLabelContainer,
   },
   props: {
     id: { type: String, required: true },
     element: {
-      type: Object as PropType<FormTypes.TextElement>,
+      type: Object as PropType<FormTypes.EmailElement>,
       required: true,
     },
     value: { required: true },
@@ -56,33 +57,36 @@ export default Vue.extend({
 </script>
 
 <template>
-  <div class="cypress-text-element">
+  <div class="cypress-email-element">
     <FormElementLabelContainer
-      className="ob-text"
+      className="ob-email"
       :id="id"
       :element="element"
       :required="element.required"
     >
       <div class="field has-addons">
-        <div class="control is-expanded">
+        <div class="control is-expanded has-icons-right">
           <input
-            type="text"
+            type="email"
             :placeholder="element.placeholderValue"
             :id="id"
             :name="element.name"
-            class="input ob-input cypress-text-control"
+            class="input ob-input cypress-email-control"
             :value="text"
             @input="updateSubmission"
             :required="element.required"
             :disabled="element.readOnly"
             @blur="setIsDirty"
           />
+          <span class="ob-input-icon icon is-small is-right">
+            <i class="material-icons is-size-5">email</i>
+          </span>
         </div>
-        <div class="control" v-if="!!element.readOnly && !!value">
+        <div v-if="!!element.readOnly && !!value" class="control">
           <CopyToClipboardButton
             className="button is-input-addon cypress-copy-to-clipboard-button"
             isInputButton
-            text="{text}"
+            :text="text"
           />
         </div>
         <div class="control">
@@ -96,30 +100,14 @@ export default Vue.extend({
           />
         </div>
       </div>
+
       <div
-        v-if="isDisplayingValidationMessage || !!element.maxLength"
+        v-if="(isDirty || displayValidationMessage) && !!validationMessage"
         role="alert"
         class="has-margin-top-8"
       >
-        <div class="is-flex is-justify-content-space-between">
-          <div
-            v-if="isDisplayingValidationMessage"
-            class="has-text-danger ob-error__text cypress-validation-message"
-          >
-            {{ validationMessage }}
-          </div>
-          <div v-else></div>
-
-          <div
-            v-if="!!element.maxLength"
-            :class="{
-              'ob-max-length__text': true,
-              'cypress-max-length-message': true,
-              'has-text-danger': text.length > element.maxLength,
-            }"
-          >
-            {{ text.length }} / {{ element.maxLength }}
-          </div>
+        <div class="has-text-danger ob-error__text cypress-validation-message">
+          {{ validationMessage }}
         </div>
       </div>
     </FormElementLabelContainer>

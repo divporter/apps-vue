@@ -5,8 +5,11 @@ import { FormTypes } from "@oneblink/types"
 export default Vue.extend({
   props: {
     className: String,
-    element: Object as PropType<FormTypes.FormElementBase>,
-    id: String,
+    element: {
+      type: Object as PropType<FormTypes.FormElementBase>,
+      required: true,
+    },
+    id: { type: String, required: true },
     required: Boolean,
   },
 })

@@ -4,11 +4,14 @@ import { FormTypes } from "@oneblink/types"
 
 export default Vue.extend({
   props: {
-    page: Object as PropType<FormTypes.PageElement>,
-    currentPage: Object as PropType<FormTypes.PageElement>,
-    currentPageIndex: Number,
-    index: Number,
-    hasErrors: Boolean,
+    page: { type: Object as PropType<FormTypes.PageElement>, required: true },
+    currentPage: {
+      type: Object as PropType<FormTypes.PageElement>,
+      required: true,
+    },
+    currentPageIndex: { type: Number, required: true },
+    index: { type: Number, required: true },
+    hasErrors: { type: Boolean, required: true },
   },
   methods: {
     onClick() {

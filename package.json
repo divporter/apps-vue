@@ -17,6 +17,7 @@
     "D": "^1.0.0",
     "abort-controller": "^3.0.0",
     "blueimp-load-image": "^5.16.0",
+    "color": "^4.0.2",
     "core-js": "^3.6.5",
     "uuid": "^8.3.2",
     "vue": "^2.6.14",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@oneblink/types": "github:oneblink/types",
+    "@types/color": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "~4.5.0",

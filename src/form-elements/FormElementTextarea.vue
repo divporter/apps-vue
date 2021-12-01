@@ -13,7 +13,7 @@ export default Vue.extend({
   components: {
     FormElementLabelContainer,
     LookupButton,
-    CopyToClipboardButton
+    CopyToClipboardButton,
   },
   props: {
     id: String,
@@ -62,7 +62,7 @@ export default Vue.extend({
 <template>
   <div class="cypress-textarea-element">
     <FormElementLabelContainer
-      class="ob-textarea"
+      className="ob-textarea"
       :id="id"
       :element="element"
       :required="element.required"
@@ -114,7 +114,7 @@ export default Vue.extend({
       >
         <CopyToClipboardButton
           v-if="isDisplayingCopyButton"
-          class="button ob-button cypress-copy-to-clipboard-button"
+          className="button ob-button cypress-copy-to-clipboard-button"
           :text="text"
         />
         <LookupButton

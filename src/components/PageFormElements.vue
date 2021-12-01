@@ -15,13 +15,20 @@ const PageFormElementsBase = Vue.extend({
     OneBlinkFormElements,
   },
   props: {
-    isActive: Boolean,
-    definition: Object as PropType<FormTypes.Form>,
-    pageElement: Object as PropType<FormTypes.PageElement>,
-    model: Object as PropType<Record<string, unknown>>,
-    formElementsConditionallyShown: Object as PropType<
-      Record<string, FormElementConditionallyShown>
-    >,
+    isActive: { type: Boolean, required: true },
+    definition: { type: Object as PropType<FormTypes.Form>, required: true },
+    pageElement: {
+      type: Object as PropType<FormTypes.PageElement>,
+      required: true,
+    },
+    model: {
+      type: Object as PropType<Record<string, unknown>>,
+      required: true,
+    },
+    formElementsConditionallyShown: {
+      type: Object as PropType<Record<string, FormElementConditionallyShown>>,
+      required: true,
+    },
     formElementsValidation: {
       type: Object as PropType<FormElementsValidation>,
       required: false,
@@ -96,6 +103,7 @@ export default class PageFormElements extends PageFormElementsBase {
       :formElementsConditionallyShown="formElementsConditionallyShown"
       :formElementsValidation="formElementsValidation"
       :displayValidationMessages="displayValidationMessages"
+      idPrefix=""
       @updateSubmission="updateSubmission"
     />
   </div>

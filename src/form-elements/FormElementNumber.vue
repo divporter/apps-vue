@@ -16,8 +16,11 @@ export default Vue.extend({
     CopyToClipboardButton,
   },
   props: {
-    id: String,
-    element: Object as PropType<FormTypes.NumberElement>,
+    id: { type: String, required: true },
+    element: {
+      type: Object as PropType<FormTypes.NumberElement>,
+      required: true,
+    },
     value: { required: true },
     displayValidationMessage: Boolean,
     validationMessage: { type: String, required: false },
@@ -68,7 +71,7 @@ export default Vue.extend({
 <template>
   <div class="cypress-number-element">
     <FormElementLabelContainer
-      class="ob-number"
+      className="ob-number"
       :id="id"
       :element="element"
       :required="element.required"
@@ -91,9 +94,9 @@ export default Vue.extend({
             <i class="material-icons is-size-5">tag</i>
           </span>
         </div>
-        <div v-if="!!element.readOnly && !!text" className="control">
+        <div v-if="!!element.readOnly && !!text" class="control">
           <CopyToClipboardButton
-            class="button is-input-addon cypress-copy-to-clipboard-button"
+            className="button is-input-addon cypress-copy-to-clipboard-button"
             isInputButton
             :text="text"
           />

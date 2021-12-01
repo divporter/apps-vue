@@ -59,9 +59,13 @@ const OneBlinkFormBaseBase = Vue.extend({
     Fragment,
   },
   props: {
-    definition: Object as PropType<FormTypes.Form>,
-    submission: Object as PropType<Record<string, unknown>>,
+    definition: { type: Object as PropType<FormTypes.Form>, required: true },
+    submission: {
+      type: Object as PropType<Record<string, unknown>>,
+      required: true,
+    },
     isReadOnly: Boolean,
+    primaryColor: String,
   },
   data(): DataProps {
     return {
@@ -73,7 +77,7 @@ const OneBlinkFormBaseBase = Vue.extend({
     }
   },
   mounted() {
-    this.setPageId(this.pages[0].id)
+    this.currentPageId = this.visiblePages[0].id
 
     eventBus.$on("OneBlinkFormBase-executedLookup", (id: string) => {
       if (!this.elementIdsWithLookupsExecuted.includes(id)) {
@@ -229,9 +233,11 @@ const OneBlinkFormBaseBase = Vue.extend({
 
 @Component
 export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
-  //@ts-expect-error dun worry about it
+  //@ts-expect-error don't worry about typescript
   @ProvideReactive() definition: FormTypes.Form = this.definition
   @ProvideReactive() formIsReadOnly: boolean = this.isReadOnly
+  //@ts-expect-error don't worry about typescript
+  @ProvideReactive() primaryColor: string = this.primaryColor
 }
 </script>
 

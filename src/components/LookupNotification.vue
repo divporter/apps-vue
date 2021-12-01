@@ -45,12 +45,18 @@ const LookupNotificationBase = Vue.extend({
       type: Function as PropType<(autoLookupValue: unknown) => string>,
       required: false,
     },
-    element: Object as PropType<FormTypes.LookupFormElement>,
+    element: {
+      type: Object as PropType<FormTypes.LookupFormElement>,
+      required: true,
+    },
     validationMessage: { type: String, required: false },
     hasMarginTop: { type: Boolean, required: false },
     isInputButton: { type: Boolean, required: false },
     // formIsReadOnly: Boolean,
-    model: Object as PropType<Record<string, unknown>>,
+    model: {
+      type: Object as PropType<Record<string, unknown>>,
+      required: true,
+    },
   },
   data(): DataProps {
     return {
@@ -84,6 +90,13 @@ export default class LookupNotification extends LookupNotificationBase {
   @Inject() readonly handleLookup!: (callback: LookupCallback) => void
   @InjectReactive() definition!: FormTypes.Form
   @InjectReactive() formIsReadOnly!: boolean
+
+  mounted() {
+    if (this.autoLookupValueString) {
+      this.triggerLookup(this.autoLookupValueString)
+    }
+  }
+
   @Watch("autoLookupValueString")
   onAutoLookupValueStringChanged(newValue: string): void {
     if (newValue !== undefined) {
@@ -311,6 +324,7 @@ export default class LookupNotification extends LookupNotificationBase {
       v-bind:isLookup="isLookup"
     ></slot>
     <div
+      v-if="isLookup"
       :class="{
         'ob-lookup__notification': true,
         'is-looking-up': isLookingUp,

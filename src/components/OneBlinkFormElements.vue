@@ -5,8 +5,6 @@ import { Fragment } from "vue-frag"
 import {
   FormElementsValidation,
   FormElementConditionallyShown,
-  FormElementValueChangeHandler,
-  FormElementLookupHandler,
 } from "../types/form"
 import FormElement from "@/components/FormElement.vue"
 
@@ -16,8 +14,14 @@ export default Vue.extend({
     Fragment,
   },
   props: {
-    elements: Array as PropType<FormTypes.FormElement[]>,
-    model: Object as PropType<Record<string, unknown>>,
+    elements: {
+      type: Array as PropType<FormTypes.FormElement[]>,
+      required: true,
+    },
+    model: {
+      type: Object as PropType<Record<string, unknown>>,
+      required: true,
+    },
     formElementsValidation: {
       type: Object as PropType<FormElementsValidation>,
       required: false,
@@ -27,10 +31,8 @@ export default Vue.extend({
       type: Object as PropType<FormElementConditionallyShown>,
       required: false,
     },
-    id: String,
+    idPrefix: { type: String, required: true },
     isEven: { type: Boolean, required: false },
-    onChange: Object as PropType<FormElementValueChangeHandler>,
-    onLookup: Object as PropType<FormElementLookupHandler>,
   },
   mounted() {
     // console.log(this.element)
@@ -59,10 +61,14 @@ export default Vue.extend({
         :model="model"
         :value="model[element.name]"
         :name="element.name"
+        :id="idPrefix + element.name"
         :formElementValidation="
           formElementsValidation
             ? formElementsValidation[element.name]
             : undefined
+        "
+        :formElementConditionallyShown="
+          formElementsConditionallyShown[element.name]
         "
         :displayValidationMessage="displayValidationMessages"
         @updateSubmission="updateSubmission"

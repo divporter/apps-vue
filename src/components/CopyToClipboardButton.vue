@@ -4,7 +4,7 @@ import utilsService from "../services/utils-service"
 
 export default Vue.extend({
   props: {
-    text: String,
+    text: { type: String, required: true },
     className: { type: String, required: false },
     isInputButton: { type: Boolean, required: false },
   },
