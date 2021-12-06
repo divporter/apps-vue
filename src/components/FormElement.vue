@@ -15,8 +15,17 @@ import FormElementTelephone from "@/form-elements/FormElementTelephone.vue"
 import FormElementRadio from "@/form-elements/FormElementRadio.vue"
 import FormElementCheckBoxes from "@/form-elements/FormElementCheckBoxes.vue"
 import FormElementSelect from "@/form-elements/FormElementSelect.vue"
+import FormElementAutocomplete from "@/form-elements/FormElementAutocomplete.vue"
+import FormElementBoolean from "@/form-elements/FormElementBoolean.vue"
+import FormElementDate from "@/form-elements/FormElementDate.vue"
+import FormElementDateTime from "@/form-elements/FormElementDateTime.vue"
+import FormElementTime from "@/form-elements/FormElementTime.vue"
+import FormElementHeading from "@/form-elements/FormElementHeading.vue"
+import FormElementHTML from "@/form-elements/FormElementHTML.vue"
+import FormElementImage from "@/form-elements/FormElementImage.vue"
+import FormElementForm from "@/form-elements/FormElementForm.vue"
 
-export default Vue.extend({
+const FormElementBase = Vue.extend({
   components: {
     LookupNotification,
     FormElementText,
@@ -27,6 +36,15 @@ export default Vue.extend({
     FormElementRadio,
     FormElementCheckBoxes,
     FormElementSelect,
+    FormElementAutocomplete,
+    FormElementBoolean,
+    FormElementDate,
+    FormElementDateTime,
+    FormElementTime,
+    FormElementHeading,
+    FormElementHTML,
+    FormElementImage,
+    FormElementForm,
   },
   props: {
     element: {
@@ -60,7 +78,10 @@ export default Vue.extend({
       value: string | undefined
     }) {
       this.$emit("updateSubmission", {
-        [name]: value,
+        newSubmission: {
+          [name]: value,
+        },
+        element: this.element,
       })
     },
   },
@@ -79,6 +100,14 @@ export default Vue.extend({
     },
   },
 })
+
+export default class FormElement extends FormElementBase {
+  // beforeCreate() {
+  //   if (this.$options.components) {
+  //     this.$options.components.FormElementForm = require("../form-elements/FormElementForm.vue")
+  //   }
+  // }
+}
 </script>
 
 <template>
@@ -244,5 +273,115 @@ export default Vue.extend({
         />
       </template>
     </LookupNotification>
+    <LookupNotification
+      :autoLookupValue="value"
+      :element="element"
+      :model="model"
+      v-if="element.type === 'autocomplete'"
+    >
+      <template v-slot:default="{ isLookup }">
+        <FormElementAutocomplete
+          :key="element.id"
+          :id="id"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          :conditionallyShownOptions="conditionallyShownOptions"
+          @updateSubmission="updateSubmission"
+        />
+      </template>
+    </LookupNotification>
+    <LookupNotification
+      :autoLookupValue="value"
+      :element="element"
+      :model="model"
+      v-if="element.type === 'boolean'"
+    >
+      <template v-slot:default="{ isLookup }">
+        <FormElementBoolean
+          :key="element.id"
+          :id="id"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          :conditionallyShownOptions="conditionallyShownOptions"
+          @updateSubmission="updateSubmission"
+        />
+      </template>
+    </LookupNotification>
+    <LookupNotification
+      :element="element"
+      :model="model"
+      v-if="element.type === 'date'"
+    >
+      <template v-slot:default="{ triggerLookup, isLookup }">
+        <FormElementDate
+          :key="element.id"
+          :id="id"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          @updateSubmission="updateSubmission"
+          @triggerLookup="triggerLookup"
+        />
+      </template>
+    </LookupNotification>
+    <LookupNotification
+      :element="element"
+      :model="model"
+      v-if="element.type === 'datetime'"
+    >
+      <template v-slot:default="{ triggerLookup, isLookup }">
+        <FormElementDateTime
+          :key="element.id"
+          :id="id"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          @updateSubmission="updateSubmission"
+          @triggerLookup="triggerLookup"
+        />
+      </template>
+    </LookupNotification>
+    <LookupNotification
+      :element="element"
+      :model="model"
+      v-if="element.type === 'time'"
+    >
+      <template v-slot:default="{ triggerLookup, isLookup }">
+        <FormElementTime
+          :key="element.id"
+          :id="id"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          @updateSubmission="updateSubmission"
+          @triggerLookup="triggerLookup"
+        />
+      </template>
+    </LookupNotification>
+    <FormElementHeading :element="element" v-if="element.type === 'heading'" />
+    <FormElementHTML :element="element" v-if="element.type === 'html'" />
+    <FormElementImage :element="element" v-if="element.type === 'image'" />
+    <FormElementForm
+      v-if="element.type === 'infoPage' || element.type === 'form'"
+      :id="id"
+      :element="element"
+      :value="value"
+      :displayValidationMessages="displayValidationMessage"
+      :formElementValidation="formElementValidation"
+      :formElementConditionallyShown="formElementConditionallyShown"
+      @updateSubmission="updateSubmission"
+    />
   </div>
 </template>

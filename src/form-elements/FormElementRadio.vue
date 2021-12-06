@@ -52,9 +52,6 @@ const FormElementRadioBase = Vue.extend({
         return (
           !this.conditionallyShownOptions ||
           this.conditionallyShownOptions.some(({ id }) => id === option.id)
-          //TODO work out what to do here for autocomplete
-          //   &&
-          // (!onFilter || onFilter(option))
         )
       })
     },

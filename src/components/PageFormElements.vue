@@ -36,7 +36,11 @@ const PageFormElementsBase = Vue.extend({
     displayValidationMessages: Boolean,
   },
   methods: {
-    updateSubmission(newSubmission: Record<string, unknown>): void {
+    updateSubmission({
+      newSubmission,
+    }: {
+      newSubmission: Record<string, unknown>
+    }): void {
       this.$emit("updateSubmission", newSubmission)
     },
     handleLookup(
@@ -68,7 +72,7 @@ const PageFormElementsBase = Vue.extend({
           }
         })
       }
-      this.updateSubmission(submission)
+      this.updateSubmission({ newSubmission: submission })
       //TODO function to update definition
     },
   },
@@ -97,7 +101,6 @@ export default class PageFormElements extends PageFormElementsBase {
     v-show="isActive"
   >
     <OneBlinkFormElements
-      :definition="definition"
       :elements="pageElement.elements"
       :model="model"
       :formElementsConditionallyShown="formElementsConditionallyShown"

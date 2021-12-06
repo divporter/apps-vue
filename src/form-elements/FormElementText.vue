@@ -82,14 +82,13 @@ export default Vue.extend({
           <CopyToClipboardButton
             className="button is-input-addon cypress-copy-to-clipboard-button"
             isInputButton
-            text="{text}"
+            :text="text"
           />
         </div>
         <div class="control">
           <LookupButton
             v-if="isLookup"
             isInputButton
-            :element="element"
             :value="value"
             :validationMessage="validationMessage"
             @click="triggerLookup"

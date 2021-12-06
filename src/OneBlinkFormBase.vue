@@ -233,10 +233,10 @@ const OneBlinkFormBaseBase = Vue.extend({
 
 @Component
 export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
-  //@ts-expect-error don't worry about typescript
+  //@ts-expect-error don't worry about it typescript
   @ProvideReactive() definition: FormTypes.Form = this.definition
   @ProvideReactive() formIsReadOnly: boolean = this.isReadOnly
-  //@ts-expect-error don't worry about typescript
+  //@ts-expect-error don't worry about it typescript
   @ProvideReactive() primaryColor: string = this.primaryColor
 }
 </script>
@@ -362,7 +362,7 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
               @updateSubmission="updateSubmission"
             />
           </div>
-          <!-- next/previous buttons go here -->
+          <!-- TODO next/previous buttons go here -->
         </div>
       </form>
     </div>

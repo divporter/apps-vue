@@ -38,8 +38,14 @@ export default Vue.extend({
     // console.log(this.element)
   },
   methods: {
-    updateSubmission(newSubmission: Record<string, unknown>) {
-      this.$emit("updateSubmission", newSubmission)
+    updateSubmission({
+      newSubmission,
+      element,
+    }: {
+      newSubmission: Record<string, unknown>
+      element: FormTypes.FormElement
+    }) {
+      this.$emit("updateSubmission", { newSubmission, element })
     },
   },
 })

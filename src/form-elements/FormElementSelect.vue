@@ -50,7 +50,6 @@ export default Vue.extend({
     },
     selectedValuesAsArray(): string[] {
       if (Array.isArray(this.value)) {
-        console.log("is cool it's an array")
         return this.value
       }
       if (typeof this.value === "string") {
@@ -85,11 +84,9 @@ export default Vue.extend({
       this.updateSubmissionAndSetDirty(val)
     },
     handleMulti(event: { target: HTMLSelectElement }) {
-      console.log(this.value)
       const vals = Array.from(event.target.selectedOptions).map(
         (opt) => opt.value
       )
-      console.log(vals)
       this.updateSubmissionAndSetDirty(vals)
     },
     triggerLookup() {
@@ -167,7 +164,6 @@ export default Vue.extend({
           <LookupButton
             v-if="isLookup"
             hasMarginTop
-            :element="element"
             :value="value"
             :validationMessage="validationMessage"
             @click="triggerLookup"

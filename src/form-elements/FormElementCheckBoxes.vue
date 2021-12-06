@@ -89,7 +89,7 @@ export default Vue.extend({
 </script>
 
 <template>
-  <div className="cypress-checkbox-element">
+  <div class="cypress-checkbox-element">
     <FormElementLabelContainer
       className="ob-checkbox"
       :id="id"
@@ -161,7 +161,6 @@ export default Vue.extend({
         <LookupButton
           v-if="isLookup"
           hasMarginTop
-          :element="element"
           :value="value"
           :validationMessage="validationMessage"
           @click="triggerLookup"
@@ -172,9 +171,7 @@ export default Vue.extend({
         role="alert"
         class="has-margin-top-8"
       >
-        <div
-          className="has-text-danger ob-error__text cypress-validation-message"
-        >
+        <div class="has-text-danger ob-error__text cypress-validation-message">
           {{ validationMessage }}
         </div>
       </div>

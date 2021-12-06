@@ -19,9 +19,12 @@
     "blueimp-load-image": "^5.16.0",
     "color": "^4.0.2",
     "core-js": "^3.6.5",
+    "flatpickr": "^4.6.9",
+    "sanitize-html": "^2.6.0",
     "uuid": "^8.3.2",
     "vue": "^2.6.14",
     "vue-class-component": "^7.2.6",
+    "vue-flatpickr-component": "^9.0.5",
     "vue-frag": "^1.3.1",
     "vue-property-decorator": "^9.1.2",
     "vuetify": "^2.5.14"
@@ -29,6 +32,7 @@
   "devDependencies": {
     "@oneblink/types": "github:oneblink/types",
     "@types/color": "^3.0.2",
+    "@types/sanitize-html": "^2.6.0",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "~4.5.0",

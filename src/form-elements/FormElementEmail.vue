@@ -93,7 +93,6 @@ export default Vue.extend({
           <LookupButton
             v-if="isLookup"
             isInputButton
-            :element="element"
             :value="value"
             :validationMessage="validationMessage"
             @click="triggerLookup"

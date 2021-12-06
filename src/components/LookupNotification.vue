@@ -12,7 +12,7 @@ import { generateHeaders } from "@oneblink/apps/dist/services/fetch"
 
 import generateDefaultData from "../services/generate-default-data"
 import { FormSubmissionModel } from "../types/form"
-import { MergeLookupResults } from "../types/lookups"
+import { MergeLookupResults, LookupCallback } from "../types/lookups"
 import eventBus from "@/services/event-bus"
 
 import OnLoading from "@/components/OnLoading.vue"
@@ -27,11 +27,6 @@ type DataProps = {
   cancelLookupDisabled: boolean
   abortController: AbortController
 }
-
-type LookupCallback = ({
-  submission,
-  elements,
-}: MergeLookupResults) => MergeLookupResults
 
 const LookupNotificationBase = Vue.extend({
   components: {
@@ -233,7 +228,7 @@ export default class LookupNotification extends LookupNotificationBase {
 
   async triggerLookup(newValue: unknown): Promise<void> {
     // No lookups for read only forms
-    if (this.formIsReadOnly) return
+    if (this.formIsReadOnly || !this.isLookup) return
     // if the element triggering the lookup has no value..
     // ..return and do nothing
     if (newValue === undefined || newValue === null) return
