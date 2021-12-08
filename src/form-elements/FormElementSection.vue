@@ -3,8 +3,6 @@ import Vue, { PropType } from "vue"
 import { Component, Watch, Inject } from "vue-property-decorator"
 import { FormTypes } from "@oneblink/types"
 
-// import { Collapse, Tooltip } from '@material-ui/core'
-
 import { checkSectionValidity } from "../services/form-validation"
 import {
   FormElementsValidation,
@@ -13,7 +11,7 @@ import {
 import { MergeLookupResults, LookupCallback } from "../types/lookups"
 
 type DataProps = {
-  isCollapsed: boolean
+  panel: number[]
   isDisplayingError: boolean
 }
 
@@ -44,8 +42,8 @@ const FormElementSectionBase = Vue.extend({
   },
   data(): DataProps {
     return {
-      isCollapsed: this.element.isCollapsed,
       isDisplayingError: this.element.isCollapsed,
+      panel: !this.element.isCollapsed ? [0] : [],
     }
   },
   computed: {
@@ -58,10 +56,8 @@ const FormElementSectionBase = Vue.extend({
         checkSectionValidity(this.element, this.formElementsValidation)
       )
     },
-    panel(): number[] {
-      console.log(this.isCollapsed)
-      return !this.isCollapsed ? [0] : []
-      // return [0]
+    isCollapsed(): boolean {
+      return this.panel.length === 0
     },
   },
   methods: {
@@ -130,44 +126,46 @@ export default class FormElementSection extends FormElementSectionBase {
 
 <template>
   <div :class="{ 'ob-section': true, 'ob-section__invalid': isInvalid }">
-    <v-expansion-panels :value="panel" multiple>
+    <v-expansion-panels v-model="panel" multiple>
       <v-expansion-panel>
         <v-expansion-panel-header>
-          <div class="ob-section__header cypress-section-header">
-            <h3 className="ob-section__header-text title is-3">
-              {{ element.label }}
-              <v-tooltip v-if="element.label && element.hint" top>
-                <template v-slot:activator="{ on, attrs }">
-                  <i
-                    class="material-icons has-text-grey-light ob-label__hint"
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    info
-                  </i>
-                </template>
-                {{ element.hint }}
-              </v-tooltip>
-            </h3>
-            <div class="ob-section__header-icon-container">
-              <v-tooltip v-if="isInvalid" top>
-                <template v-slot:activator="{ on, attrs }">
-                  <i
-                    class="
-                      material-icons
-                      has-text-danger
-                      cypress-section-invalid-icon
-                      section-invalid-icon
-                      fade-in
-                    "
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    warning
-                  </i>
-                </template>
-                <span>Section has errors</span>
-              </v-tooltip>
+          <div>
+            <div class="ob-section__header cypress-section-header">
+              <h3 class="ob-section__header-text title is-3">
+                {{ element.label }}
+                <v-tooltip v-if="element.label && element.hint" top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <i
+                      class="material-icons has-text-grey-light ob-label__hint"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      info
+                    </i>
+                  </template>
+                  {{ element.hint }}
+                </v-tooltip>
+              </h3>
+              <div class="ob-section__header-icon-container">
+                <v-tooltip v-if="isInvalid" top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <i
+                      class="
+                        material-icons
+                        has-text-danger
+                        cypress-section-invalid-icon
+                        section-invalid-icon
+                        fade-in
+                      "
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      warning
+                    </i>
+                  </template>
+                  <span>Section has errors</span>
+                </v-tooltip>
+              </div>
             </div>
             <hr class="ob-section__divider" />
           </div>
@@ -193,3 +191,29 @@ export default class FormElementSection extends FormElementSectionBase {
     </v-expansion-panels>
   </div>
 </template>
+
+<style scoped>
+.title.ob-section__header-text {
+  font-weight: 200;
+  line-height: 1.125;
+  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Helvetica", "Arial", sans-serif !important;
+}
+
+.is-3 {
+  font-size: 2rem !important;
+}
+
+.v-expansion-panel-header {
+  padding: 0;
+}
+
+.v-expansion-panel-content /deep/ .v-expansion-panel-content__wrap {
+  padding: 0;
+}
+
+.v-expansion-panel::before {
+  box-shadow: none;
+}
+</style>

@@ -83,6 +83,7 @@ const LookupNotificationBase = Vue.extend({
 @Component
 export default class LookupNotification extends LookupNotificationBase {
   @Inject() readonly handleLookup!: (callback: LookupCallback) => void
+  //TODO verify these
   @InjectReactive() definition!: FormTypes.Form
   @InjectReactive() formIsReadOnly!: boolean
 

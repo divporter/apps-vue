@@ -66,7 +66,7 @@ const FormElementRadioBase = Vue.extend({
     setIsDirty() {
       this.isDirty = true
     },
-    updateSubmissionAndSetDirty(input: string | undefined){
+    updateSubmissionAndSetDirty(input: string | undefined) {
       this.setIsDirty()
       this.updateSubmission(input)
     },
@@ -75,6 +75,7 @@ const FormElementRadioBase = Vue.extend({
 
 @Component
 export default class FormElementRadio extends FormElementRadioBase {
+  //TODO verify this?
   @InjectReactive() primaryColor?: string
   @Watch("value")
   onValueChanged(newValue: string | undefined) {

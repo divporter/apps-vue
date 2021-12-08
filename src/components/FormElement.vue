@@ -24,6 +24,7 @@ import FormElementHeading from "@/form-elements/FormElementHeading.vue"
 import FormElementHTML from "@/form-elements/FormElementHTML.vue"
 import FormElementImage from "@/form-elements/FormElementImage.vue"
 import FormElementForm from "@/form-elements/FormElementForm.vue"
+import FormElementCalculation from "@/form-elements/FormElementCalculation.vue"
 
 const FormElementBase = Vue.extend({
   components: {
@@ -45,6 +46,7 @@ const FormElementBase = Vue.extend({
     FormElementHTML,
     FormElementImage,
     FormElementForm,
+    FormElementCalculation,
   },
   props: {
     element: {
@@ -381,6 +383,12 @@ export default class FormElement extends FormElementBase {
       :displayValidationMessages="displayValidationMessage"
       :formElementValidation="formElementValidation"
       :formElementConditionallyShown="formElementConditionallyShown"
+      @updateSubmission="updateSubmission"
+    />
+    <FormElementCalculation
+      v-if="element.type === 'calculation'"
+      :element="element"
+      :value="value"
       @updateSubmission="updateSubmission"
     />
   </div>
