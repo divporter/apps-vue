@@ -7,10 +7,12 @@ import {
   FormElementConditionallyShown,
 } from "../types/form"
 import FormElement from "@/components/FormElement.vue"
+import FormElementSection from "@/form-elements/FormElementSection.vue"
 
 export default Vue.extend({
   components: {
     FormElement,
+    FormElementSection,
     Fragment,
   },
   props: {
@@ -54,6 +56,27 @@ export default Vue.extend({
 <template>
   <Fragment>
     <template v-for="element of elements">
+      <div
+        :key="element.id"
+        v-if="
+          element.type === 'section' &&
+          formElementsConditionallyShown &&
+          formElementsConditionallyShown[element.id] &&
+          !formElementsConditionallyShown[element.id].isHidden
+        "
+        class="ob-element cypress-element-container"
+      >
+        <FormElementSection
+          :element="element"
+          :displayValidationMessages="displayValidationMessages"
+          :idPrefix="idPrefix"
+          :formElementsConditionallyShown="formElementsConditionallyShown"
+          :formElementsValidation="formElementsValidation"
+          :model="model"
+          @updateSubmission="updateSubmission"
+        />
+      </div>
+
       <FormElement
         :key="element.id"
         v-if="
