@@ -47,7 +47,6 @@ const LookupNotificationBase = Vue.extend({
     validationMessage: { type: String, required: false },
     hasMarginTop: { type: Boolean, required: false },
     isInputButton: { type: Boolean, required: false },
-    // formIsReadOnly: Boolean,
     model: {
       type: Object as PropType<Record<string, unknown>>,
       required: true,
@@ -83,9 +82,12 @@ const LookupNotificationBase = Vue.extend({
 @Component
 export default class LookupNotification extends LookupNotificationBase {
   @Inject() readonly handleLookup!: (callback: LookupCallback) => void
-  //TODO verify these
   @InjectReactive() definition!: FormTypes.Form
-  @InjectReactive() formIsReadOnly!: boolean
+  @InjectReactive() isReadOnly!: boolean
+
+  get formIsReadOnly() {
+    return this.isReadOnly
+  }
 
   mounted() {
     if (this.autoLookupValueString) {

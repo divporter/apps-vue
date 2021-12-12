@@ -173,7 +173,7 @@ export default class FormElementDate extends FormElementDateTimeBase {
           v-if="isLookup"
           isInputButton
           :value="value"
-          validationMessage="{validationMessage}"
+          :validationMessage="validationMessage"
         />
       </div>
 

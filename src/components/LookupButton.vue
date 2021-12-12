@@ -27,8 +27,11 @@ const LookupButtonBase = Vue.extend({
 
 @Component
 export default class LookupButton extends LookupButtonBase {
-  //TODO veritfy this
-  @InjectReactive() formIsReadOnly!: boolean
+  @InjectReactive() isReadOnly!: boolean
+
+  get formIsReadOnly() {
+    return this.isReadOnly
+  }
 }
 </script>
 

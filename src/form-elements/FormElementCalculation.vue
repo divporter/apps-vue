@@ -1,19 +1,13 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { Component, Watch } from "vue-property-decorator"
+import { Component, Watch, InjectReactive } from "vue-property-decorator"
 
 import ExpressionParser from "morph-expressions"
 import escapeString from "escape-string-regexp"
 import sanitizeHtmlStandard from "../services/sanitize-html"
-// import useFormSubmissionModel from '../hooks/useFormSubmissionModelContext'
 import { FormTypes } from "@oneblink/types"
 import { localisationService, Sentry } from "@oneblink/apps"
 import { FormSubmissionModel } from "../types/form"
-import eventBus from "../services/event-bus"
-
-type DataProps = {
-  formSubmissionModel: Record<string, unknown>
-}
 
 const FormElementCalculationBase = Vue.extend({
   props: {
@@ -22,11 +16,6 @@ const FormElementCalculationBase = Vue.extend({
       type: Object as PropType<FormTypes.CalculationElement>,
       required: true,
     },
-  },
-  data(): DataProps {
-    return {
-      formSubmissionModel: {},
-    }
   },
   computed: {
     htmlValue(): string {
@@ -247,7 +236,7 @@ const FormElementCalculationBase = Vue.extend({
     recalculate() {
       if (!this.calculation) return
       //@ts-expect-error not typed unfortunately
-      const newValue = this.calculation.eval(this.formSubmissionModelParsed)
+      const newValue = this.calculation.eval(this.formSubmissionModel)
       if (
         this.value === newValue ||
         (this.value === undefined && isNaN(newValue))
@@ -261,15 +250,16 @@ const FormElementCalculationBase = Vue.extend({
       }
     },
   },
-  mounted() {
-    eventBus.$on("submissionChanged", (submission: Record<string, unknown>) => {
-      this.formSubmissionModel = submission
-    })
-  },
 })
 
 @Component
 export default class FormElementCalculation extends FormElementCalculationBase {
+  @InjectReactive() readonly submission!: Record<string, unknown>
+
+  get formSubmissionModel() {
+    return this.submission
+  }
+
   @Watch("calculation", { immediate: true })
   @Watch("formSubmissionModel", { immediate: true })
   onCalculationChange() {

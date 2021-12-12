@@ -235,7 +235,8 @@ const OneBlinkFormBaseBase = Vue.extend({
 export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
   //@ts-expect-error don't worry about it typescript
   @ProvideReactive() definition: FormTypes.Form = this.definition
-  @ProvideReactive() formIsReadOnly: boolean = this.isReadOnly
+  //@ts-expect-error don't worry about it typescript
+  @ProvideReactive() isReadOnly: boolean = this.isReadOnly
   //@ts-expect-error don't worry about it typescript
   @ProvideReactive() primaryColor: string = this.primaryColor
 }

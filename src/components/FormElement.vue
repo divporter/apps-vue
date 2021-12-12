@@ -25,6 +25,8 @@ import FormElementHTML from "@/form-elements/FormElementHTML.vue"
 import FormElementImage from "@/form-elements/FormElementImage.vue"
 import FormElementForm from "@/form-elements/FormElementForm.vue"
 import FormElementCalculation from "@/form-elements/FormElementCalculation.vue"
+import FormElementCamera from "@/form-elements/FormElementCamera.vue"
+import FormElementRepeatableSet from "@/form-elements/FormElementRepeatableSet.vue"
 
 const FormElementBase = Vue.extend({
   components: {
@@ -47,6 +49,8 @@ const FormElementBase = Vue.extend({
     FormElementImage,
     FormElementForm,
     FormElementCalculation,
+    FormElementCamera,
+    FormElementRepeatableSet,
   },
   props: {
     element: {
@@ -389,6 +393,26 @@ export default class FormElement extends FormElementBase {
       v-if="element.type === 'calculation'"
       :element="element"
       :value="value"
+      @updateSubmission="updateSubmission"
+    />
+    <FormElementCamera
+      v-if="element.type === 'camera'"
+      :id="id"
+      :element="element"
+      :value="value"
+      :validationMessage="validationMessage"
+      :displayValidationMessage="displayValidationMessage"
+      @updateSubmission="updateSubmission"
+    />
+    <FormElementRepeatableSet
+      v-if="element.type === 'repeatableSet'"
+      :id="id"
+      :isEven="!isEven"
+      :element="element"
+      :value="value"
+      :displayValidationMessages="displayValidationMessage"
+      :formElementValidation="formElementValidation"
+      :formElementConditionallyShown="formElementConditionallyShown"
       @updateSubmission="updateSubmission"
     />
   </div>

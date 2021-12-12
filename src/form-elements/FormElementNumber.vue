@@ -33,9 +33,10 @@ export default Vue.extend({
   },
   methods: {
     updateSubmissionInput(event: { target: HTMLInputElement }) {
+      const value = parseFloat(event.target.value)
       this.$emit("updateSubmission", {
         name: this.element.name,
-        value: parseFloat(event.target.value) || undefined,
+        value: !Number.isNaN(value) ? value : undefined,
       })
     },
     updateSubmissionSlider(input: number) {
