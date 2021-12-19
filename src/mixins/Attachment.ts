@@ -25,7 +25,7 @@ export default Vue.extend({
   inject: ["definition"],
   props: {
     element: {
-      type: Object as PropType<FormTypes.CameraElement>,
+      type: Object as PropType<FormTypes.CameraElement | FormTypes.DrawElement>,
       required: true,
     },
     value: {
@@ -179,6 +179,8 @@ export default Vue.extend({
         return
       }
 
+      console.log(JSON.stringify(this.value, null, 2))
+
       // If the value is string we will assume a base64 data uri
       if (typeof this.value === "string") {
         this.imageUrl = this.value
@@ -186,6 +188,7 @@ export default Vue.extend({
       }
 
       if (this.value.type) {
+        console.log('doing this')
         if (!checkIfContentTypeIsImage(this.value.data.type)) {
           // Not an image which we will represent as null
           this.imageUrl = null
@@ -264,9 +267,12 @@ export default Vue.extend({
     isPrivate() {
       this.triggerUpload()
     },
-    value() {
-      this.triggerUpload()
-      this.triggerDownload()
+    value: {
+      immediate: true,
+      handler: function(){
+        this.triggerUpload()
+        this.triggerDownload()
+      }
     },
     isAuthenticated() {
       this.triggerDownload()

@@ -1,15 +1,12 @@
 <script lang="ts">
-import Vue from "vue"
+import mixins from "vue-typed-mixins"
+
+import IsOfflineMixin from "@/mixins/IsOffline"
 import OnLoading from "../OnLoading.vue"
 
-export default Vue.extend({
+export default mixins(IsOfflineMixin).extend({
   components: {
     OnLoading,
-  },
-  computed: {
-    isOffline(): boolean {
-      return window.navigator && !window.navigator.onLine
-    },
   },
 })
 </script>

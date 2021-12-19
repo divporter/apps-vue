@@ -1,5 +1,6 @@
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { PropType } from "vue"
+import mixins from "vue-typed-mixins"
 import {
   Component,
   Watch,
@@ -13,7 +14,8 @@ import { generateHeaders } from "@oneblink/apps/dist/services/fetch"
 import generateDefaultData from "../services/generate-default-data"
 import { FormSubmissionModel } from "../types/form"
 import { MergeLookupResults, LookupCallback } from "../types/lookups"
-import eventBus from "@/services/event-bus"
+
+import IsOfflineMixin from "@/mixins/IsOffline"
 
 import OnLoading from "@/components/OnLoading.vue"
 
@@ -28,7 +30,7 @@ type DataProps = {
   abortController: AbortController
 }
 
-const LookupNotificationBase = Vue.extend({
+const LookupNotificationBase = mixins(IsOfflineMixin).extend({
   components: {
     OnLoading,
   },
@@ -65,9 +67,6 @@ const LookupNotificationBase = Vue.extend({
     }
   },
   computed: {
-    isOffline(): boolean {
-      return window.navigator && !window.navigator.onLine
-    },
     autoLookupValueString(): unknown {
       return this.stringifyAutoLookupValue
         ? this.stringifyAutoLookupValue(this.autoLookupValue)
@@ -82,6 +81,8 @@ const LookupNotificationBase = Vue.extend({
 @Component
 export default class LookupNotification extends LookupNotificationBase {
   @Inject() readonly handleLookup!: (callback: LookupCallback) => void
+  @Inject() readonly executedLookup!: (id: string) => void
+  @Inject() readonly executeLookupFailed!: (id: string) => void
   @InjectReactive() definition!: FormTypes.Form
   @InjectReactive() isReadOnly!: boolean
 
@@ -243,7 +244,7 @@ export default class LookupNotification extends LookupNotificationBase {
       return
     }
 
-    eventBus.$emit("OneBlinkFormBase-executedLookup", this.element.id)
+    this.executedLookup(this.element.id)
     this.isDisabled = true
     this.isCancellable = false
     this.hasLookupFailed = false
@@ -292,7 +293,7 @@ export default class LookupNotification extends LookupNotificationBase {
       await new Promise((resolve) => setTimeout(() => resolve(false), 750))
       this.isLookingUp = false
     } catch (error) {
-      eventBus.$emit("OneBlinkFormBase-executeLookupFailed", this.element.id)
+      this.executeLookupFailed(this.element.id)
 
       // Cancelling will throw an error.
       if (this.abortController.signal.aborted) {

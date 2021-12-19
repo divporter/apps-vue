@@ -130,7 +130,7 @@ export default Vue.extend({
 <template>
   <div class="cypress-repeatable-set-element">
     <FormElementLabelContainer
-      :className="['ob-repeatable-set', isEven ? 'even' : 'odd']"
+      :className="['ob-repeatable-set', isEven ? 'even' : 'odd'].join(' ')"
       :element="element"
       :id="id"
       :required="!!element.minSetEntries"

@@ -1,6 +1,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 import { FormTypes } from "@oneblink/types"
+
 import { Fragment } from "vue-frag"
 import OnLoading from "@/components/OnLoading.vue"
 import AttachmentStatus from "@/components/attachments/AttachmentStatus.vue"
@@ -14,44 +15,37 @@ export default Vue.extend({
     ImagePreviewUnavailable,
   },
   props: {
+    element: {
+      type: Object as PropType<FormTypes.DrawElement>,
+      required: true,
+    },
     uploadErrorMessage: String,
     isUploading: Boolean,
     isLoadingImageUrl: Boolean,
     imageUrl: String,
     loadImageUrlError: Error,
-    isLoading: Boolean,
-    element: {
-      type: Object as PropType<FormTypes.CameraElement>,
-      required: true,
-    },
-  },
-  methods: {
-    onAnnotate() {
-      this.$emit("annotate")
-    },
   },
 })
 </script>
 
 <template>
   <Fragment>
-    <div v-if="uploadErrorMessage" class="figure-content">
+    <template v-if="uploadErrorMessage">
       <h3 class="title is-3">Upload Failed</h3>
       <p>
-        Your photo failed to upload, please press the <b>Clear</b> button and
-        try again.
+        Your signature failed to upload, please press the <b>Clear</b> button
+        and try again.
       </p>
-    </div>
-    <div v-else-if="loadImageUrlError" class="figure-content">
+    </template>
+    <template v-else-if="loadImageUrlError">
       <h3 class="title is-3">Preview Failed</h3>
       <p>{{ loadImageUrlError.message }}</p>
-    </div>
-    <div
-      v-else-if="isLoadingImageUrl || isLoading"
-      class="figure-content has-text-centered cypress-camera-loading-image"
-    >
-      <OnLoading small />
-    </div>
+    </template>
+    <OnLoading
+      v-else-if="isLoadingImageUrl"
+      small
+      className="cypress-signature-loading-image"
+    />
     <template v-else-if="imageUrl">
       <span class="ob-figure__status">
         <AttachmentStatus
@@ -62,35 +56,14 @@ export default Vue.extend({
           :imageUrl="imageUrl"
         />
       </span>
-      <img
-        :src="imageUrl"
-        class="cypress-camera-image ob-camera__img"
-        crossorigin="anonymous"
-      />
-      <button
-        type="button"
-        class="
-          button
-          is-primary
-          ob-camera__annotate-button
-          cypress-annotate-button
-        "
-        @click="onAnnotate"
-        :disabled="element.readOnly"
-      >
-        <span class="icon">
-          <i class="material-icons">brush</i>
-        </span>
-      </button>
+      <img :src="imageUrl" class="cypress-signature-image ob-signature__img" />
     </template>
-    <div v-else class="figure-content">
-      <ImagePreviewUnavailable />
-    </div>
+    <ImagePreviewUnavailable v-else />
   </Fragment>
 </template>
 
 <style scoped>
-.figure-content .title {
+.title {
   font-weight: 200;
   line-height: 1.125;
   font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen",

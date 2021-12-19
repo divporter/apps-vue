@@ -4,8 +4,6 @@ import { Component, Watch } from "vue-property-decorator"
 
 import scrollingService from "../services/scrolling-service"
 
-//TODO try canvas resize to follow pen better
-
 type DataProps = {
   isDirty: boolean
   penColour: string

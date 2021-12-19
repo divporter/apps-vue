@@ -27,6 +27,9 @@ import FormElementForm from "@/form-elements/FormElementForm.vue"
 import FormElementCalculation from "@/form-elements/FormElementCalculation.vue"
 import FormElementCamera from "@/form-elements/FormElementCamera.vue"
 import FormElementRepeatableSet from "@/form-elements/FormElementRepeatableSet.vue"
+import FormElementSignature from "@/form-elements/FormElementSignature.vue"
+import FormElementLocation from "@/form-elements/FormElementLocation.vue"
+import FormElementFiles from "@/form-elements/FormElementFiles/index.vue"
 
 const FormElementBase = Vue.extend({
   components: {
@@ -51,6 +54,9 @@ const FormElementBase = Vue.extend({
     FormElementCalculation,
     FormElementCamera,
     FormElementRepeatableSet,
+    FormElementSignature,
+    FormElementLocation,
+    FormElementFiles,
   },
   props: {
     element: {
@@ -413,6 +419,33 @@ export default class FormElement extends FormElementBase {
       :displayValidationMessages="displayValidationMessage"
       :formElementValidation="formElementValidation"
       :formElementConditionallyShown="formElementConditionallyShown"
+      @updateSubmission="updateSubmission"
+    />
+    <FormElementSignature
+      v-if="element.type === 'draw'"
+      :id="id"
+      :element="element"
+      :value="value"
+      :validationMessage="validationMessage"
+      :displayValidationMessage="displayValidationMessage"
+      @updateSubmission="updateSubmission"
+    />
+    <FormElementLocation
+      v-if="element.type === 'location'"
+      :id="id"
+      :element="element"
+      :value="value"
+      :validationMessage="validationMessage"
+      :displayValidationMessage="displayValidationMessage"
+      @updateSubmission="updateSubmission"
+    />
+    <FormElementFiles
+      v-if="element.type === 'files'"
+      :id="id"
+      :element="element"
+      :value="value"
+      :validationMessage="validationMessage"
+      :displayValidationMessage="displayValidationMessage"
       @updateSubmission="updateSubmission"
     />
   </div>

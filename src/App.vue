@@ -1,6 +1,10 @@
 <template>
   <v-app>
-    <OneBlinkForm v-if="definition" :definition="definition" />
+    <OneBlinkForm
+      v-if="definition"
+      :definition="definition"
+      googleMapsApiKey="AIzaSyDO61UD5hx75GEPeDvJozrQT-ipPO2PGTs"
+    />
   </v-app>
 </template>
 

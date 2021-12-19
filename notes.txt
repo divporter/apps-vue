@@ -1,2 +1,3 @@
 https://5balloons.info/create-publish-you-first-vue-plugin-on-npm-the-right-way/
 https://github.com/mitevpi/vuetify-component-lib-template
+https://developers.google.com/maps/documentation/javascript/reference/marker#Marker.dragend

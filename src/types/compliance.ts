@@ -1,4 +1,4 @@
-import { PossibleFileConfiguration } from "../form-elements/FormElementFiles"
+import { PossibleFileConfiguration } from "../types/files"
 export interface FormElementComplianceValue {
   value?: string
   notes?: string

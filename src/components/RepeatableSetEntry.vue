@@ -1,6 +1,6 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { Component, Inject } from "vue-property-decorator"
+import { Component, Inject, ProvideReactive } from "vue-property-decorator"
 import { Fragment } from "vue-frag"
 import Modal from "@/components/Modal.vue"
 
@@ -68,6 +68,8 @@ const RepeatableSetEntryBase = Vue.extend({
 
 @Component
 export default class RepeatableSetEntry extends RepeatableSetEntryBase {
+  //@ts-expect-error don't worry about it typescript
+  @ProvideReactive() index: number = this.index
   @Inject() readonly handleLookup!: (callback: LookupCallback) => void
 
   beforeCreate() {

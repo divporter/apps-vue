@@ -1,15 +1,12 @@
 <script lang="ts">
-import Vue from "vue"
+import mixins from "vue-typed-mixins"
+
+import IsOfflineMixin from "@/mixins/IsOffline"
 import { Fragment } from "vue-frag"
 
-export default Vue.extend({
+export default mixins(IsOfflineMixin).extend({
   components: {
     Fragment,
-  },
-  computed: {
-    isOffline(): boolean {
-      return window.navigator && !window.navigator.onLine
-    },
   },
 })
 </script>

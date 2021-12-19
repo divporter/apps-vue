@@ -19,7 +19,7 @@
 //   setFormSubmission: SetFormSubmission
 // }
 import Vue, { PropType } from "vue"
-import { Component, ProvideReactive } from "vue-property-decorator"
+import { Component, ProvideReactive, Provide } from "vue-property-decorator"
 import { FormTypes } from "@oneblink/types"
 import { localisationService } from "@oneblink/apps"
 import { Fragment } from "vue-frag"
@@ -41,8 +41,6 @@ import {
   // FormSubmissionModel,
   // SetFormSubmission,
 } from "./types/form"
-
-import eventBus from "@/services/event-bus"
 
 type DataProps = {
   currentPageId?: string
@@ -66,6 +64,7 @@ const OneBlinkFormBaseBase = Vue.extend({
     },
     isReadOnly: Boolean,
     primaryColor: String,
+    googleMapsApiKey: String,
   },
   data(): DataProps {
     return {
@@ -78,23 +77,6 @@ const OneBlinkFormBaseBase = Vue.extend({
   },
   mounted() {
     this.currentPageId = this.visiblePages[0].id
-
-    eventBus.$on("OneBlinkFormBase-executedLookup", (id: string) => {
-      if (!this.elementIdsWithLookupsExecuted.includes(id)) {
-        this.elementIdsWithLookupsExecuted.push(id)
-      }
-    })
-
-    eventBus.$on("OneBlinkFormBase-executeLookupFailed", (id: string) => {
-      this.elementIdsWithLookupsExecuted =
-        this.elementIdsWithLookupsExecuted.filter(
-          (elementId) => elementId === id
-        )
-    })
-  },
-  beforeDestroy() {
-    eventBus.$off("OneBlinkFormBase-executedLookup")
-    eventBus.$off("OneBlinkFormBase-executeLookupFailed")
   },
   methods: {
     updateSubmission(newSubmission: Record<string, unknown>) {
@@ -134,6 +116,17 @@ const OneBlinkFormBaseBase = Vue.extend({
       return checkSectionValidity(page, this.formElementsValidation)
     },
     formatDatetimeLong: localisationService.formatDatetimeLong,
+    executedLookup(id: string) {
+      if (!this.elementIdsWithLookupsExecuted.includes(id)) {
+        this.elementIdsWithLookupsExecuted.push(id)
+      }
+    },
+    executeLookupFailed(id: string) {
+      this.elementIdsWithLookupsExecuted =
+        this.elementIdsWithLookupsExecuted.filter(
+          (elementId) => elementId === id
+        )
+    },
   },
   computed: {
     pages(): Array<FormTypes.PageElement> {
@@ -239,6 +232,11 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
   @ProvideReactive() isReadOnly: boolean = this.isReadOnly
   //@ts-expect-error don't worry about it typescript
   @ProvideReactive() primaryColor: string = this.primaryColor
+  @Provide() executedLookup: (id: string) => void = this.executedLookup
+  @Provide() executeLookupFailed: (id: string) => void =
+    this.executeLookupFailed
+  //@ts-expect-error don't worry about it typescript
+  @ProvideReactive() googleMapsApiKey: string = this.googleMapsApiKey
 }
 </script>
 
@@ -369,3 +367,17 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
     </div>
   </Fragment>
 </template>
+
+<style scoped>
+.figure-content .title {
+  font-weight: 200;
+  line-height: 1.125;
+  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Helvetica", "Arial", sans-serif !important;
+}
+
+.is-3 {
+  font-size: 2rem !important;
+}
+</style>
