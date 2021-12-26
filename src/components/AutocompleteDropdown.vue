@@ -228,7 +228,7 @@ export default class AutocompleteDropdown extends AutocompleteDropdownBase {
     this.search()
   }
 
-  beforeUnmount() {
+  beforeDestroy() {
     clearTimeout(this.timeoutId)
   }
 }

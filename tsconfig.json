@@ -12,21 +12,11 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": [
-      "webpack-env",
-      "google.maps",
-    ],
+    "types": ["webpack-env", "google.maps", "grecaptcha"],
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
   "include": [
     "src/**/*.ts",
@@ -35,10 +25,6 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ],
-  "typeRoots": [
-    "./src/types"
-  ]
+  "exclude": ["node_modules"],
+  "typeRoots": ["./src/types"]
 }

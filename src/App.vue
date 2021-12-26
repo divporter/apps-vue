@@ -4,6 +4,7 @@
       v-if="definition"
       :definition="definition"
       googleMapsApiKey="AIzaSyDO61UD5hx75GEPeDvJozrQT-ipPO2PGTs"
+      captchaSiteKey="6LfKybodAAAAAOANSfDlxPDNx5zcNuA4GrzCKWIt"
     />
   </v-app>
 </template>

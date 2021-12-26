@@ -51,16 +51,15 @@ const SignatureDrawingBase = mixins(AttachmentMixin).extend({
       const { data } = this.$refs.canvasRef.saveSignature()
 
       if (checkIsUsingLegacyStorage(this.element)) {
-        this.$emit("updateSubmission", data)
+        this.$emit("updateSubmission", { attachment: data })
         return
       }
 
       // Convert base64 data uri to blob and send it on its way
       const blob = await urlToBlobAsync(data)
-      this.$emit(
-        "updateSubmission",
-        prepareNewAttachment(blob, "signature.png", this.element)
-      )
+      this.$emit("updateSubmission", {
+        attachment: prepareNewAttachment(blob, "signature.png", this.element),
+      })
     },
     handleEndDraw() {
       if (window.cordova) {
@@ -85,7 +84,7 @@ const SignatureDrawingBase = mixins(AttachmentMixin).extend({
 
 @Component
 export default class SignatureDrawing extends SignatureDrawingBase {
-  beforeUnmount() {
+  beforeDestroy() {
     window.removeEventListener("resize", this.resize)
   }
 

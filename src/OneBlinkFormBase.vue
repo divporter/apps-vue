@@ -65,6 +65,7 @@ const OneBlinkFormBaseBase = Vue.extend({
     isReadOnly: Boolean,
     primaryColor: String,
     googleMapsApiKey: String,
+    captchaSiteKey: String
   },
   data(): DataProps {
     return {
@@ -237,6 +238,8 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
     this.executeLookupFailed
   //@ts-expect-error don't worry about it typescript
   @ProvideReactive() googleMapsApiKey: string = this.googleMapsApiKey
+  //@ts-expect-error don't worry about it typescript
+  @ProvideReactive() captchaSiteKey: string = this.captchaSiteKey
 }
 </script>
 

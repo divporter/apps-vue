@@ -4,7 +4,9 @@ import { FormTypes } from "@oneblink/types"
 import {
   FormElementValidation,
   FormElementConditionallyShown,
-} from "../types/form"
+} from "@/types/form"
+
+import { FormElementBinaryStorageValue } from "@/types/attachments"
 
 import LookupNotification from "@/components/LookupNotification.vue"
 import FormElementText from "@/form-elements/FormElementText.vue"
@@ -30,6 +32,10 @@ import FormElementRepeatableSet from "@/form-elements/FormElementRepeatableSet.v
 import FormElementSignature from "@/form-elements/FormElementSignature.vue"
 import FormElementLocation from "@/form-elements/FormElementLocation.vue"
 import FormElementFiles from "@/form-elements/FormElementFiles/index.vue"
+import FormElementCaptcha from "@/form-elements/FormElementCaptcha.vue"
+import FormElementSummary from "@/form-elements/FormElementSummary.vue"
+import FormElementCompliance from "@/form-elements/FormElementCompliance.vue"
+import FormElementBarcodeScanner from "@/form-elements/FormElementBarcodeScanner.vue"
 
 const FormElementBase = Vue.extend({
   components: {
@@ -57,6 +63,10 @@ const FormElementBase = Vue.extend({
     FormElementSignature,
     FormElementLocation,
     FormElementFiles,
+    FormElementCaptcha,
+    FormElementSummary,
+    FormElementCompliance,
+    FormElementBarcodeScanner,
   },
   props: {
     element: {
@@ -87,13 +97,25 @@ const FormElementBase = Vue.extend({
       value,
     }: {
       name: string
-      value: string | undefined
+      value: unknown | undefined
     }) {
       this.$emit("updateSubmission", {
         newSubmission: {
           [name]: value,
         },
         element: this.element,
+      })
+    },
+    updateAttachmentSubmission({
+      name,
+      value,
+    }: {
+      name: string
+      value?: { attachment?: FormElementBinaryStorageValue }
+    }) {
+      this.updateSubmission({
+        name,
+        value: value?.attachment,
       })
     },
   },
@@ -408,7 +430,7 @@ export default class FormElement extends FormElementBase {
       :value="value"
       :validationMessage="validationMessage"
       :displayValidationMessage="displayValidationMessage"
-      @updateSubmission="updateSubmission"
+      @updateSubmission="updateAttachmentSubmission"
     />
     <FormElementRepeatableSet
       v-if="element.type === 'repeatableSet'"
@@ -428,7 +450,7 @@ export default class FormElement extends FormElementBase {
       :value="value"
       :validationMessage="validationMessage"
       :displayValidationMessage="displayValidationMessage"
-      @updateSubmission="updateSubmission"
+      @updateSubmission="updateAttachmentSubmission"
     />
     <FormElementLocation
       v-if="element.type === 'location'"
@@ -448,5 +470,46 @@ export default class FormElement extends FormElementBase {
       :displayValidationMessage="displayValidationMessage"
       @updateSubmission="updateSubmission"
     />
+    <FormElementCaptcha
+      v-if="element.type === 'captcha'"
+      :id="id"
+      :element="element"
+      @updateSubmission="updateSubmission"
+      :validationMessage="validationMessage"
+      :displayValidationMessage="displayValidationMessage"
+    />
+    <FormElementSummary
+      v-if="element.type === 'summary'"
+      :id="id"
+      :value="value"
+      :element="element"
+      @updateSubmission="updateSubmission"
+    />
+    <FormElementCompliance
+      v-if="element.type === 'compliance'"
+      :id="id"
+      :value="value"
+      :element="element"
+      @updateSubmission="updateSubmission"
+    />
+    <LookupNotification
+      :element="element"
+      :model="model"
+      v-if="element.type === 'barcodeScanner'"
+    >
+      <template v-slot:default="{ triggerLookup, isLookup }">
+        <FormElementBarcodeScanner
+          :key="element.id"
+          :id="id"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          @updateSubmission="updateSubmission"
+          @triggerLookup="triggerLookup"
+        />
+      </template>
+    </LookupNotification>
   </div>
 </template>

@@ -29,7 +29,11 @@ export default Vue.extend({
     }
   },
   methods: {
-    updateSubmission(attachment?: FormElementBinaryStorageValue) {
+    updateSubmission({
+      attachment,
+    }: {
+      attachment?: FormElementBinaryStorageValue
+    }) {
       this.isDirty = true
       this.$emit("updateSubmission", {
         name: this.element.name,
@@ -41,7 +45,7 @@ export default Vue.extend({
     }: {
       value?: FormElementBinaryStorageValue
     }) {
-      this.updateSubmission(value)
+      this.updateSubmission({ attachment: value })
     },
   },
 })
@@ -56,7 +60,6 @@ export default Vue.extend({
       :required="element.required"
     >
       <div class="control">
-        <!-- TODO -->
         <SignatureDisplay
           v-if="value"
           :element="element"

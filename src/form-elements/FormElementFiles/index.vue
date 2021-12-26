@@ -19,7 +19,7 @@ import { Fragment } from "vue-frag"
 
 import { FormTypes } from "@oneblink/types"
 import FormElementFilesLegacy from "./legacy/FormElementFiles.vue"
-// import FormElementFiles from "./FormElementFiles"
+import FormElementFiles from "./FormElementFiles.vue"
 import { Attachment } from "../../types/attachments"
 
 import { checkIsUsingLegacyStorage } from "../../services/attachments"
@@ -28,6 +28,7 @@ export default Vue.extend({
   components: {
     Fragment,
     FormElementFilesLegacy,
+    FormElementFiles,
   },
   props: {
     id: { type: String, required: true },
@@ -52,8 +53,9 @@ export default Vue.extend({
 </script>
 
 <template>
-  <Fragment v-if="checkIsUsingLegacyStorage(element)">
+  <Fragment>
     <FormElementFilesLegacy
+      v-if="checkIsUsingLegacyStorage(element)"
       :id="id"
       :element="element"
       :value="value"
@@ -61,10 +63,14 @@ export default Vue.extend({
       :displayValidationMessage="displayValidationMessage"
       @updateSubmission="updateSubmission"
     />
-    <!--FormElementFiles
-      value={value as Attachment[] | undefined}
-      onChange={onChange as FormElementValueChangeHandler<Attachment[]>}
-      {...props}
-    /-->
+    <FormElementFiles
+      v-else
+      :id="id"
+      :element="element"
+      :value="value"
+      :validationMessage="validationMessage"
+      :displayValidationMessage="displayValidationMessage"
+      @updateSubmission="updateSubmission"
+    />
   </Fragment>
 </template>

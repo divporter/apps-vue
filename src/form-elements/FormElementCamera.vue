@@ -70,16 +70,18 @@ export default mixins(AttachmentMixin).extend({
   methods: {
     async setBase64DataUri(dataUri: string, fileName: string) {
       if (checkIsUsingLegacyStorage(this.element)) {
-        this.updateSubmission(dataUri)
+        this.updateSubmission({ attachment: dataUri })
         return
       }
 
       // Convert base64 data uri to blob and send it on its way
       const blob = await urlToBlobAsync(dataUri)
-      this.updateSubmission(prepareNewAttachment(blob, fileName, this.element))
+      this.updateSubmission({
+        attachment: prepareNewAttachment(blob, fileName, this.element),
+      })
     },
     clearImage() {
-      this.updateSubmission(undefined)
+      this.updateSubmission({ attachment: undefined })
     },
     async fileChange(changeEvent: { target: HTMLInputElement }) {
       if (!changeEvent.target || !changeEvent.target.files) {
@@ -111,20 +113,20 @@ export default mixins(AttachmentMixin).extend({
         if (result instanceof Blob) {
           if (isUsingLegacyStorage) {
             const canvas = await blobToCanvas(result)
-            this.updateSubmission(canvas.toDataURL())
+            this.updateSubmission({ attachment: canvas.toDataURL() })
           } else {
-            this.updateSubmission(
-              prepareNewAttachment(result, file.name, this.element)
-            )
+            this.updateSubmission({
+              attachment: prepareNewAttachment(result, file.name, this.element),
+            })
           }
         } else {
           if (isUsingLegacyStorage) {
-            this.updateSubmission(result.toDataURL())
+            this.updateSubmission({ attachment: result.toDataURL() })
           } else {
             const blob = await canvasToBlob(result)
-            this.updateSubmission(
-              prepareNewAttachment(blob, file.name, this.element)
-            )
+            this.updateSubmission({
+              attachment: prepareNewAttachment(blob, file.name, this.element),
+            })
           }
         }
 

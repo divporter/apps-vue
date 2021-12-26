@@ -93,10 +93,16 @@ export default Vue.extend({
     },
   },
   methods: {
-    updateSubmission(attachment?: FormElementBinaryStorageValue) {
+    updateSubmission({
+      id,
+      attachment,
+    }: {
+      id?: string
+      attachment?: FormElementBinaryStorageValue
+    }) {
       this.$emit("updateSubmission", {
         name: this.element.name,
-        value: attachment,
+        value: { id, attachment },
       })
     },
     triggerUpload() {
@@ -143,9 +149,7 @@ export default Vue.extend({
           console.log("Successfully Uploaded attachment!", upload)
 
           // UPDATE ATTACHMENT
-          //TODO $emit
-          this.updateSubmission(upload)
-          // onChange(newAttachment._id, upload)
+          this.updateSubmission({ id: newAttachment._id, attachment: upload })
         } catch (error) {
           if (this.ignoreUpload) {
             return
@@ -157,16 +161,13 @@ export default Vue.extend({
             error
           )
           this.updateSubmission({
-            ...newAttachment,
-            type: "ERROR",
-            errorMessage: (error as Error).message,
+            id: newAttachment._id,
+            attachment: {
+              ...newAttachment,
+              type: "ERROR",
+              errorMessage: (error as Error).message,
+            },
           })
-          //TODO $emit
-          // onChange(newAttachment._id, {
-          //   ...newAttachment,
-          //   type: "ERROR",
-          //   errorMessage: (error as Error).message,
-          // })
         }
       }
 
@@ -188,7 +189,7 @@ export default Vue.extend({
       }
 
       if (this.value.type) {
-        console.log('doing this')
+        console.log("doing this")
         if (!checkIfContentTypeIsImage(this.value.data.type)) {
           // Not an image which we will represent as null
           this.imageUrl = null
@@ -269,10 +270,10 @@ export default Vue.extend({
     },
     value: {
       immediate: true,
-      handler: function(){
+      handler: function () {
         this.triggerUpload()
         this.triggerDownload()
-      }
+      },
     },
     isAuthenticated() {
       this.triggerDownload()

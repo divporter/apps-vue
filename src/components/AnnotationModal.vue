@@ -123,7 +123,7 @@ export default class AnnotationModal extends AnnotationModalBase {
     this.setCanvas()
   }
 
-  beforeUnmount() {
+  beforeDestroy() {
     scrollingService.enableScrolling()
   }
 }

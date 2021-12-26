@@ -7,7 +7,7 @@ export default Vue.extend({
     Fragment,
   },
   props: {
-    imageUrl: { type: String, required: true },
+    imageUrl: String,
   },
 })
 </script>

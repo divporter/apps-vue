@@ -119,7 +119,7 @@ export default class FormElementTime extends FormElementTimeBase {
     }
   }
 
-  beforeUnmount() {
+  beforeDestroy() {
     if (this.vp) {
       this.vp.destroy()
     }

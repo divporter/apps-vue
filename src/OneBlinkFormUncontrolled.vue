@@ -14,9 +14,10 @@ const OneBlinkFormUncontrolledBase = Vue.extend({
     OneBlinkFormBase,
   },
   props: {
-    definition: Object as PropType<FormTypes.Form>,
+    definition: { type: Object as PropType<FormTypes.Form>, required: true },
     isReadOnly: Boolean,
     googleMapsApiKey: String,
+    captchaSiteKey: String,
   },
   data(): DataProps {
     return {
@@ -46,6 +47,7 @@ export default class OneBlinkFormUncontrolled extends OneBlinkFormUncontrolledBa
       @updateSubmission="updateSubmission"
       :isReadOnly="isReadOnly"
       :googleMapsApiKey="googleMapsApiKey"
+      :captchaSiteKey="captchaSiteKey"
     />
   </div>
 </template>

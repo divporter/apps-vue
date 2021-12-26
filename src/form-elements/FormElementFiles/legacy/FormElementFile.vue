@@ -41,7 +41,7 @@ export default Vue.extend({
 <template>
   <FileCard
     :element="element"
-    :imageUrl="isImageType ? file.data : null"
+    :imageUrl="isImageType ? file.data : undefined"
     :fileName="file.fileName"
     canDownload
     @download="handleDownload"

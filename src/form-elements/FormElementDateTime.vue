@@ -132,7 +132,7 @@ export default class FormElementDate extends FormElementDateTimeBase {
     }
   }
 
-  beforeUnmount() {
+  beforeDestroy() {
     if (this.vp) {
       this.vp.destroy()
     }
