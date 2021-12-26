@@ -43,6 +43,9 @@ const PageFormElementsBase = Vue.extend({
     }): void {
       this.$emit("updateSubmission", newSubmission)
     },
+    updateDefinition(newDefinition: FormTypes.Form): void {
+      this.$emit("updateDefinition", newDefinition)
+    },
     handleLookup(
       mergeLookupResults: ({
         submission,
@@ -73,7 +76,7 @@ const PageFormElementsBase = Vue.extend({
         })
       }
       this.updateSubmission({ newSubmission: submission })
-      //TODO function to update definition
+      this.updateDefinition(definition)
     },
   },
 })

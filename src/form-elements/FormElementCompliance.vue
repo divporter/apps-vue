@@ -9,12 +9,7 @@ import ComplianceButton from "./ComplianceButton.vue"
 import FormElementFiles from "./FormElementFiles/index.vue"
 import FormElementTextarea from "./FormElementTextarea.vue"
 import { PossibleFileConfiguration } from "@/types/files"
-
-export interface Value {
-  value?: string
-  notes?: string
-  files?: PossibleFileConfiguration[]
-}
+import { FormElementComplianceValue as Value } from "@/types/compliance"
 
 const baseElement = {
   conditionallyShow: false,

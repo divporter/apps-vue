@@ -1,10 +1,12 @@
 <script lang="ts">
-import Vue, { PropType } from "vue"
+import { PropType } from "vue"
+import mixins from "vue-typed-mixins"
+import { Component, Watch } from "vue-property-decorator"
 import { FormTypes } from "@oneblink/types"
 
-//TODO retry load script if user comes online
+import IsOfflineMixin from "@/mixins/IsOffline"
 
-export default Vue.extend({
+const FormElementCaptchaBase = mixins(IsOfflineMixin).extend({
   inject: ["captchaSiteKey"],
   props: {
     element: {
@@ -49,6 +51,17 @@ export default Vue.extend({
     this.initGRecaptcha()
   },
 })
+
+@Component
+export default class FormElementCaptchaComponent extends FormElementCaptchaBase {
+  @Watch("isOffline")
+  isOfflineChange(newValue: boolean) {
+    //user is online
+    if (!newValue) {
+      this.initGRecaptcha()
+    }
+  }
+}
 </script>
 
 <template>
