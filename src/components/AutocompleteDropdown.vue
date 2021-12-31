@@ -119,8 +119,6 @@ const AutocompleteDropdownBase = Vue.extend({
         return
       }
 
-      event.preventDefault()
-
       const previousFocusedOptionIndex = this.currentFocusedOptionIndex
       let nextFocusedOptionIndex = this.currentFocusedOptionIndex
       if (upArrowPressed) {
@@ -263,7 +261,7 @@ export default class AutocompleteDropdown extends AutocompleteDropdownBase {
             :disabled="disabled"
             @focus="focus"
             @blur="handleBlur"
-            @keydown="onKeyDown"
+            @keydown.prevent="onKeyDown"
             @input="handleChangeLabel"
           />
           <span

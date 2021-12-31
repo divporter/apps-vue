@@ -1,30 +1,18 @@
 <script lang="ts">
-// export type BaseProps = {
-//   onCancel: () => unknown
-//   onSubmit: (newFormSubmission: submissionService.NewFormSubmission) => unknown
-//   disabled?: boolean
-//   isPreview?: boolean
-//   googleMapsApiKey?: string
-//   captchaSiteKey?: string
-//   buttons?: FormsAppsTypes.FormsListStyles["buttons"]
-//   primaryColour?: string
-//   onSaveDraft?: (
-//     newDraftSubmission: submissionService.NewDraftSubmission
-//   ) => unknown
-// }
-
-// export type ControlledProps = {
-//   definition: FormTypes.Form
-//   submission: FormSubmissionModel
-//   setFormSubmission: SetFormSubmission
-// }
-import Vue, { PropType } from "vue"
+import { PropType } from "vue"
 import mixins from "vue-typed-mixins"
-import { Component, ProvideReactive, Provide } from "vue-property-decorator"
+import {
+  Component,
+  ProvideReactive,
+  Provide,
+  Watch,
+} from "vue-property-decorator"
 import { FormTypes, FormsAppsTypes } from "@oneblink/types"
-import { localisationService } from "@oneblink/apps"
+import { localisationService, formService } from "@oneblink/apps"
+import { formElementsService } from "@oneblink/sdk-core"
 import { Fragment } from "vue-frag"
 import * as bulmaToast from "bulma-toast"
+import _cloneDeep from "lodash.clonedeep"
 
 import IsOfflineMixin from "@/mixins/IsOffline"
 
@@ -32,6 +20,7 @@ import PageFormElements from "@/components/PageFormElements.vue"
 import NavigationStep from "@/components/NavigationStep.vue"
 import CustomisableButtonInner from "@/components/CustomisableButtonInner.vue"
 import Modal from "@/components/Modal.vue"
+import OneBlinkAppsErrorOriginalMessage from "@/components/OneBlinkAppsErrorOriginalMessage.vue"
 
 import generateFormElementsConditionallyShown from "./services/generate-form-elements-conditionally-shown"
 import {
@@ -41,6 +30,7 @@ import {
 } from "./services/form-validation"
 import cleanFormSubmissionModel from "./services/cleanFormSubmissionModel"
 import checkIfAttachmentsAreUploading from "./services/checkIfAttachmentsAreUploading"
+import generateDefaultData from "./services/generate-default-data"
 
 import {
   FormElementsValidation,
@@ -58,7 +48,8 @@ type DataProps = {
   isDirty: boolean
   hasConfirmedNavigation: boolean | null
   isNavigationAllowed: boolean
-  goToLocation: () => void | null
+  goToLocation: ((value: unknown) => void) | null
+  loadDynamicOptionsState: formService.LoadFormElementDynamicOptionsResult | null
 }
 
 const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
@@ -68,6 +59,7 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
     Fragment,
     CustomisableButtonInner,
     Modal,
+    OneBlinkAppsErrorOriginalMessage,
   },
   props: {
     definition: { type: Object as PropType<FormTypes.Form>, required: true },
@@ -95,6 +87,7 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
       hasConfirmedNavigation: null,
       isNavigationAllowed: false,
       goToLocation: null,
+      loadDynamicOptionsState: null,
     }
   },
   mounted() {
@@ -223,7 +216,7 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
           return
         }
 
-        this.$emit("saveDraft")
+        this.$emit("saveDraft", { definition: this.definition, submission })
       }
     },
     handleKeepGoing() {
@@ -233,17 +226,6 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
     async handleDiscardUnsavedChanges() {
       this.isNavigationAllowed = true
       this.hasConfirmedNavigation = true
-
-      await Vue.nextTick()
-
-      if (this.hasConfirmedNavigation) {
-        // Navigate to the previous blocked location with your navigate function
-        if (this.goToLocation) {
-          this.goToLocation()
-        } else {
-          this.$emit("cancel")
-        }
-      }
     },
     handleCancel() {
       if (this.isDirty) {
@@ -251,6 +233,105 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
       } else {
         this.$emit("cancel")
       }
+    },
+    handleSubmit() {
+      if (this.disabled || this.isReadOnly) return
+      this.hasAttemptedSubmit = true
+
+      if (this.formElementsValidation) {
+        console.log("Validation errors", this.formElementsValidation)
+        bulmaToast.toast({
+          message: "Please fix validation errors",
+          // @ts-expect-error bulma sets this string as a class, so we are hacking in our own classes
+          type: "ob-toast is-danger cypress-invalid-submit-attempt",
+          duration: 4000,
+          pauseOnHover: true,
+          closeOnClick: true,
+        })
+        return
+      }
+
+      const submissionData = this.getCurrentSubmissionData(false)
+
+      if (!this.checkAttachmentsCanBeSubmitted(submissionData.submission)) {
+        return
+      }
+
+      this.isNavigationAllowed = true
+
+      this.$emit("submit", {
+        definition: this.definition,
+        submission: submissionData.submission,
+        captchaTokens: submissionData.captchaTokens,
+      })
+    },
+    handlePagesLookupResult(
+      element: FormTypes.LookupFormElement,
+      elementLookupData: FormTypes.PageElement[],
+      dataLookupResult?: FormSubmissionModel
+    ) {
+      const newPageElements = elementLookupData.map((e) => ({
+        ...e,
+        injectedByElementId: element.id,
+      }))
+
+      const definition = {
+        ...this.definition,
+        isMultiPage: true,
+      }
+
+      if (!this.definition.isMultiPage) {
+        definition.elements = [
+          {
+            id: definition.id.toString(),
+            type: "page",
+            label: "Page 1",
+            elements: this.definition.elements,
+            conditionallyShow: false,
+            requiresAllConditionallyShowPredicates: false,
+          },
+          ...newPageElements,
+        ]
+      } else {
+        const indexOfPage = this.definition.elements.findIndex(
+          (pageElement: FormTypes.FormElement) => {
+            if (pageElement.type === "page") {
+              return formElementsService.findFormElement(
+                pageElement.elements,
+                (el) => el.id === element.id
+              )
+            }
+          }
+        )
+        console.log(indexOfPage)
+        if (indexOfPage === -1) {
+          return
+        }
+        definition.elements = this.definition.elements.reduce(
+          (
+            partialPageElements: FormTypes.FormElement[],
+            pageElement: FormTypes.FormElement,
+            index: number
+          ) => {
+            // @ts-expect-error Sorry typescript, we need to add a property you don't approve of :(
+            if (pageElement.injectedByElementId !== element.id) {
+              partialPageElements.push(pageElement)
+            }
+            if (index === indexOfPage) {
+              partialPageElements.push(...newPageElements)
+            }
+            return partialPageElements
+          },
+          []
+        )
+      }
+
+      const submission = generateDefaultData(definition.elements, {
+        ...this.submission,
+        ...dataLookupResult,
+      })
+      this.updateSubmission(submission)
+      this.updateDefinition(definition)
     },
   },
   computed: {
@@ -370,12 +451,67 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
   @ProvideReactive() googleMapsApiKey: string = this.googleMapsApiKey
   //@ts-expect-error don't worry about it typescript
   @ProvideReactive() captchaSiteKey: string = this.captchaSiteKey
+  @Provide() handlePagesLookupResult: (
+    element: FormTypes.LookupFormElement,
+    elementLookupData: FormTypes.PageElement[],
+    dataLookupResult?: FormSubmissionModel
+  ) => void = this.handlePagesLookupResult
 
   //@ts-expect-error any are you ok?
   beforeRouteLeave(to, from, next) {
     if (this.isDirty && !this.isNavigationAllowed) {
       this.showDialog().then(next)
     }
+  }
+
+  @Watch("hasConfirmedNavigation")
+  onHasConfirmedNavigation() {
+    if (this.hasConfirmedNavigation) {
+      // Navigate to the previous blocked location with your navigate function
+      if (this.goToLocation) {
+        this.goToLocation({})
+      } else {
+        this.$emit("cancel")
+      }
+    }
+  }
+  @Watch("definition", { immediate: true })
+  onDefinitionChanged() {
+    let ignore = false
+
+    ;(async () => {
+      const optionsByElementId = await formService.getFormElementDynamicOptions(
+        this.definition
+      )
+
+      if (ignore || !optionsByElementId.length) {
+        return
+      }
+
+      const nonOkResponse = optionsByElementId.find(
+        (optionsForElementId) => !optionsForElementId.ok
+      )
+      if (nonOkResponse && !nonOkResponse.ok) {
+        this.loadDynamicOptionsState = nonOkResponse
+        return
+      }
+
+      const clonedForm: FormTypes.Form = _cloneDeep(this.definition)
+      for (const optionsForElementId of optionsByElementId) {
+        if (optionsForElementId.ok) {
+          formElementsService.forEachFormElementWithOptions(
+            clonedForm.elements,
+            (formElement) => {
+              if (formElement.id === optionsForElementId.elementId) {
+                formElement.options = optionsForElementId.options
+              }
+            }
+          )
+        }
+      }
+
+      this.updateDefinition(clonedForm)
+    })()
   }
 }
 </script>
@@ -392,7 +528,22 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
         {{ formatDatetimeLong(new Date()) }}
       </p>
     </div>
-    <!-- TODO loadDynamicOptionsState -->
+    <template v-if="loadDynamicOptionsState && !loadDynamicOptionsState.ok">
+      <div class="has-text-centered">
+        <i class="material-icons has-text-warning icon-x-large">error</i>
+        <h3 class="title is-3">{{ loadDynamicOptionsState.error.title }}</h3>
+        <p>
+          {{ loadDynamicOptionsState.error.message }}
+        </p>
+        <p class="has-text-grey">
+          {{ formatDatetimeLong(new Date()) }}
+        </p>
+      </div>
+
+      <OneBlinkAppsErrorOriginalMessage
+        :error="loadDynamicOptionsState.error.originalError"
+      />
+    </template>
     <div class="ob-form-container" ref="obFormContainerHTMLElementRef">
       <form
         name="obForm"
@@ -402,7 +553,7 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
           'ob-form__page' + (currentPageIndex + 1),
         ]"
         noValidate
-        onSubmit="handleSubmit"
+        @submit.prevent="handleSubmit"
       >
         <div>
           <div ref="scrollToTopOfPageHTMLElementRef" />
@@ -478,74 +629,71 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
               }
             "
           />
-        </div>
-        <div class="steps">
-          <div
-            :class="{
-              'steps-content': true,
-              'is-single-step': !isShowingMultiplePages,
-            }"
-          >
-            <PageFormElements
-              v-for="page of pages"
-              :key="page.id"
-              :definition="definition"
-              :pageElement="page"
-              :model="submission"
-              :isActive="page.id === currentPageId"
-              :formElementsConditionallyShown="formElementsConditionallyShown"
-              :formElementsValidation="formElementsValidation"
-              :displayValidationMessages="
-                hasAttemptedSubmit || isDisplayingCurrentPageError
-              "
-              @updateSubmission="updateSubmission"
-              @updateDefintion="updateDefinition"
-            />
-          </div>
-          <!-- TODO next/previous buttons go here -->
-
-          <div v-if="isShowingMultiplePages" class="steps-actions">
-            <div class="steps-action">
-              <button
-                type="button"
-                @click="goToPreviousPage"
-                :disabled="currentPageId === firstVisiblePage.id"
-                class="button is-light cypress-pages-previous"
-              >
-                <span class="icon">
-                  <i class="material-icons">keyboard_arrow_left</i>
-                </span>
-                <span>Back</span>
-              </button>
-            </div>
-            <!--TODO styles come down in the API :S -->
-            <div class="step-progress-mobile cypress-steps-mobile">
-              <div
-                v-for="page of visiblePages"
+          <div class="steps">
+            <div
+              :class="{
+                'steps-content': true,
+                'is-single-step': !isShowingMultiplePages,
+              }"
+            >
+              <PageFormElements
+                v-for="page of pages"
                 :key="page.id"
-                :class="{
-                  'step-progress-mobile-dot': true,
-                  'is-active': currentPage.id === page.id,
-                  'has-background-danger':
-                    currentPage.id !== page.id && checkDisplayPageError(page),
-                }"
+                :definition="definition"
+                :pageElement="page"
+                :model="submission"
+                :isActive="page.id === currentPageId"
+                :formElementsConditionallyShown="formElementsConditionallyShown"
+                :formElementsValidation="formElementsValidation"
+                :displayValidationMessages="
+                  hasAttemptedSubmit || isDisplayingCurrentPageError
+                "
+                @updateSubmission="updateSubmission"
+                @updateDefintion="updateDefinition"
               />
             </div>
-            <div class="steps-action">
-              <button
-                type="button"
-                @click="goToNextPage"
-                :disabled="currentPageId === lastVisiblePage.id"
-                class="button is-light cypress-pages-next"
-              >
-                <span>Next</span>
-                <span class="icon">
-                  <i class="material-icons">keyboard_arrow_right</i>
-                </span>
-              </button>
+            <div v-if="isShowingMultiplePages" class="steps-actions">
+              <div class="steps-action">
+                <button
+                  type="button"
+                  @click="goToPreviousPage"
+                  :disabled="currentPageId === firstVisiblePage.id"
+                  class="button is-light cypress-pages-previous"
+                >
+                  <span class="icon">
+                    <i class="material-icons">keyboard_arrow_left</i>
+                  </span>
+                  <span>Back</span>
+                </button>
+              </div>
+              <!--TODO styles come down in the API :S -->
+              <div class="step-progress-mobile cypress-steps-mobile">
+                <div
+                  v-for="page of visiblePages"
+                  :key="page.id"
+                  :class="{
+                    'step-progress-mobile-dot': true,
+                    'is-active': currentPage.id === page.id,
+                    'has-background-danger':
+                      currentPage.id !== page.id && checkDisplayPageError(page),
+                  }"
+                />
+              </div>
+              <div class="steps-action">
+                <button
+                  type="button"
+                  @click="goToNextPage"
+                  :disabled="currentPageId === lastVisiblePage.id"
+                  class="button is-light cypress-pages-next"
+                >
+                  <span>Next</span>
+                  <span class="icon">
+                    <i class="material-icons">keyboard_arrow_right</i>
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
-
           <div v-if="!isReadOnly" class="buttons ob-buttons ob-buttons-submit">
             <button
               v-if="showSaveDraft && !definition.isInfoPage"
@@ -573,7 +721,7 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
                 "
               />
             </button>
-            <span className="ob-buttons-submit__spacer"></span>
+            <span class="ob-buttons-submit__spacer"></span>
             <button
               v-if="!definition.isInfoPage"
               type="button"
@@ -616,7 +764,9 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
                     ? buttons.submit.label
                     : 'Submit'
                 "
-                icon="buttons && buttons.submit? buttons.submit.icon : undefined"
+                :icon="
+                  buttons && buttons.submit ? buttons.submit.icon : undefined
+                "
               />
             </button>
           </div>
@@ -643,12 +793,6 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
                 "
                 @click="handleSaveDraft"
               >
-                <CustomisableButtonInner
-                  :label="
-                    buttons && buttons.submit ? buttons.submit.label : 'Submit'
-                  "
-                  icon="buttons && buttons.submit? buttons.submit.icon : undefined"
-                />
                 <CustomisableButtonInner
                   :label="
                     buttons && buttons.saveDraft

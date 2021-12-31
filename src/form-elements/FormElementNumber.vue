@@ -82,6 +82,7 @@ export default Vue.extend({
           <input
             ref="htmlInputElementRef"
             type="number"
+            :value="text"
             :placeholder="element.placeholderValue"
             :id="id"
             :name="element.name"

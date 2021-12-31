@@ -1,10 +1,29 @@
 <template>
   <v-app>
-    <OneBlinkForm
+    <!--OneBlinkForm
       v-if="definition"
       :definition="definition"
       googleMapsApiKey="AIzaSyDO61UD5hx75GEPeDvJozrQT-ipPO2PGTs"
       captchaSiteKey="6LfKybodAAAAAOANSfDlxPDNx5zcNuA4GrzCKWIt"
+      :initialSubmission="{
+        TField1: 'bye',
+        Number: 2,
+        Email: 'david@oneblink.io',
+      }"
+      @saveDraft="onSaveDraft"
+      @submit="onSubmit"
+      @cancel="onCancel"
+    /-->
+    <OneBlinkFormControlled
+      v-if="definition"
+      :definition="definition"
+      googleMapsApiKey="AIzaSyDO61UD5hx75GEPeDvJozrQT-ipPO2PGTs"
+      captchaSiteKey="6LfKybodAAAAAOANSfDlxPDNx5zcNuA4GrzCKWIt"
+      :submission="submission"
+      @saveDraft="onSaveDraft"
+      @submit="onSubmit"
+      @cancel="onCancel"
+      @updateSubmission="updateSubmission"
     />
   </v-app>
 </template>
@@ -12,29 +31,66 @@
 <script lang="ts">
 import Vue from "vue"
 import OneBlinkForm from "./OneBlinkFormUncontrolled.vue"
-import { formService } from "@oneblink/apps"
+import OneBlinkFormControlled from "./OneBlinkFormControlled.vue"
+import { formService, submissionService } from "@oneblink/apps"
 import { FormTypes } from "@oneblink/types"
 import "@oneblink/apps-react/dist/styles.css"
+import { FormSubmissionModel } from "@/types/form"
 
 type DataProps = {
-  definition?: FormTypes.Form
+  definition: FormTypes.Form | null
   loading: boolean
+  submission: FormSubmissionModel
 }
 
 export default Vue.extend({
   components: {
-    OneBlinkForm,
+    // OneBlinkForm,
+    OneBlinkFormControlled,
   },
   data(): DataProps {
     return {
-      definition: undefined,
+      definition: null,
       loading: false,
+      submission: {
+        TField1: "bye",
+        Number: 2,
+        Email: "david@oneblink.io",
+      },
     }
   },
   async mounted() {
     this.loading = true
     this.definition = await formService.getForm(9050, 992)
     this.loading = false
+  },
+  methods: {
+    onSaveDraft(newDraftSubmission: submissionService.NewDraftSubmission) {
+      console.log(newDraftSubmission)
+    },
+    onSubmit(newFormSubmission: submissionService.NewFormSubmission) {
+      console.log(newFormSubmission)
+    },
+    onCancel() {
+      console.log("canchel")
+    },
+    updateSubmission({
+      submission: newSubmission,
+      definition,
+    }: {
+      submission: FormSubmissionModel
+      definition: FormTypes.Form
+    }) {
+      console.log(JSON.stringify(newSubmission, null, 2))
+      if (newSubmission.TField1 === "four") {
+        newSubmission.Number = 4
+      }
+      //@ts-expect-error bossing it
+      definition.elements[0].elements[2].readOnly =
+        newSubmission.TField1 === "four"
+      Vue.set(this, "submission", newSubmission)
+      Vue.set(this, "definition", definition)
+    },
   },
 })
 </script>

@@ -21,7 +21,7 @@ export default Vue.extend({
     <div v-if="!options">
       <OnLoading className="has-text-centered" small></OnLoading>
     </div>
-    <div v-if="!options.length">
+    <div v-else-if="!options.length">
       <div class="has-text-grey is-size-7">
         We were unable to load your options. Please contact your administrator.
       </div>

@@ -33,7 +33,6 @@ const FormElementCaptchaBase = mixins(IsOfflineMixin).extend({
               size: "normal",
               type: "image",
               callback: (token: string) => {
-                console.log(token)
                 this.$emit("updateSubmission", {
                   name: this.element.name,
                   value: token,

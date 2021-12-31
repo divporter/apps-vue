@@ -83,6 +83,11 @@ export default class LookupNotification extends LookupNotificationBase {
   @Inject() readonly handleLookup!: (callback: LookupCallback) => void
   @Inject() readonly executedLookup!: (id: string) => void
   @Inject() readonly executeLookupFailed!: (id: string) => void
+  @Inject() readonly handlePagesLookupResult!: (
+    element: FormTypes.LookupFormElement,
+    elementLookupData: FormTypes.PageElement[],
+    dataLookupResult?: FormSubmissionModel
+  ) => void
   @InjectReactive() definition!: FormTypes.Form
   @InjectReactive() isReadOnly!: boolean
 
@@ -183,12 +188,12 @@ export default class LookupNotification extends LookupNotificationBase {
   ): void {
     if (elementLookupResult) {
       if (elementLookupResult[0] && elementLookupResult[0].type === "page") {
-        // TODO use injected function instead
-        // eventBus.$emit("injectPagesAfter", {
-        //   element: this.element,
-        //   elementLookupResult,
-        //   dataLookupResult,
-        // })
+        this.handlePagesLookupResult(
+          this.element,
+          elementLookupResult as FormTypes.PageElement[],
+          dataLookupResult
+        )
+
         return
       }
     }

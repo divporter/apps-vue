@@ -82,10 +82,6 @@ export default Vue.extend({
     },
   },
 })
-
-/* TODO 
-  option set
-*/
 </script>
 
 <template>

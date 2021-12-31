@@ -1,6 +1,6 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { Component, ProvideReactive } from "vue-property-decorator"
+import { Component, ProvideReactive, Watch } from "vue-property-decorator"
 import { FormTypes, FormsAppsTypes } from "@oneblink/types"
 import OneBlinkFormBase from "./OneBlinkFormBase.vue"
 import generateDefaultData from "./services/generate-default-data"
@@ -9,11 +9,10 @@ import _cloneDeep from "lodash.clonedeep"
 import { FormSubmissionModel } from "@/types/form"
 
 type DataProps = {
-  submission: Record<string, unknown>
   clonedDefinition: FormTypes.Form
 }
 
-const OneBlinkFormUncontrolledBase = Vue.extend({
+const OneBlinkFormControlledBase = Vue.extend({
   components: {
     OneBlinkFormBase,
   },
@@ -25,20 +24,25 @@ const OneBlinkFormUncontrolledBase = Vue.extend({
     isPreview: Boolean,
     disabled: Boolean,
     buttons: Object as PropType<FormsAppsTypes.FormsListStyles["buttons"]>,
-    initialSubmission: {
+    submission: {
       type: Object as PropType<FormSubmissionModel>,
-      required: false,
+      required: true,
     },
     primaryColor: String,
   },
   data(): DataProps {
     return {
-      submission: generateDefaultData(
-        this.definition.elements,
-        this.initialSubmission || {}
-      ),
       clonedDefinition: _cloneDeep(this.definition),
     }
+  },
+  mounted() {
+    this.$emit("updateSubmission", {
+      submission: generateDefaultData(
+        this.definition.elements,
+        this.submission || {}
+      ),
+      definition: this.definition,
+    })
   },
   computed: {
     showSaveDraft(): boolean {
@@ -47,8 +51,10 @@ const OneBlinkFormUncontrolledBase = Vue.extend({
   },
   methods: {
     updateSubmission(newSubmission: Record<string, unknown>) {
-      Vue.set(this, "submission", { ...this.submission, ...newSubmission })
-      console.log(JSON.stringify(this.submission, null, 2))
+      this.$emit("updateSubmission", {
+        submission: { ...this.submission, ...newSubmission },
+        definition: this.definition,
+      })
     },
     updateDefinition(newDefinition: FormTypes.Form) {
       Vue.set(this, "clonedDefinition", newDefinition)
@@ -66,8 +72,14 @@ const OneBlinkFormUncontrolledBase = Vue.extend({
 })
 
 @Component
-export default class OneBlinkFormUncontrolled extends OneBlinkFormUncontrolledBase {
+export default class OneBlinkFormControlled extends OneBlinkFormControlledBase {
+  //@ts-expect-error don't worry about it typescript
   @ProvideReactive() submission: Record<string, unknown> = this.submission
+
+  @Watch("definition", { deep: true })
+  onDefinitionChange() {
+    Vue.set(this, "clonedDefinition", _cloneDeep(this.definition))
+  }
 }
 </script>
 
