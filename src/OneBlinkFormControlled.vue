@@ -84,23 +84,21 @@ export default class OneBlinkFormControlled extends OneBlinkFormControlledBase {
 </script>
 
 <template>
-  <div>
-    <OneBlinkFormBase
-      :definition="clonedDefinition"
-      @updateDefinition="updateDefinition"
-      :submission="submission"
-      @updateSubmission="updateSubmission"
-      :isReadOnly="isReadOnly"
-      :googleMapsApiKey="googleMapsApiKey"
-      :captchaSiteKey="captchaSiteKey"
-      :isPreview="isPreview"
-      :disabled="disabled"
-      :buttons="buttons"
-      @cancel="handleCancel"
-      @saveDraft="handleSaveDraft"
-      @submit="handleSubmit"
-      :showSaveDraft="showSaveDraft"
-      :primaryColor="primaryColor"
-    />
-  </div>
+  <OneBlinkFormBase
+    :definition="clonedDefinition"
+    @updateDefinition="updateDefinition"
+    :submission="submission"
+    @updateSubmission="updateSubmission"
+    :isReadOnly="isReadOnly"
+    :googleMapsApiKey="googleMapsApiKey"
+    :captchaSiteKey="captchaSiteKey"
+    :isPreview="isPreview"
+    :disabled="disabled"
+    :buttons="buttons"
+    @cancel="handleCancel"
+    @saveDraft="handleSaveDraft"
+    @submit="handleSubmit"
+    :showSaveDraft="showSaveDraft"
+    :primaryColor="primaryColor"
+  />
 </template>

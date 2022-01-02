@@ -92,6 +92,42 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
   },
   mounted() {
     this.currentPageId = this.visiblePages[0].id
+    if (this.loadDynamicOptionsState) {
+      return
+    }
+    ;(async () => {
+      const optionsByElementId = await formService.getFormElementDynamicOptions(
+        this.definition
+      )
+
+      if (!optionsByElementId.length) {
+        return
+      }
+
+      const nonOkResponse = optionsByElementId.find(
+        (optionsForElementId) => !optionsForElementId.ok
+      )
+      if (nonOkResponse && !nonOkResponse.ok) {
+        this.loadDynamicOptionsState = nonOkResponse
+        return
+      }
+
+      const clonedForm: FormTypes.Form = _cloneDeep(this.definition)
+      for (const optionsForElementId of optionsByElementId) {
+        if (optionsForElementId.ok) {
+          formElementsService.forEachFormElementWithOptions(
+            clonedForm.elements,
+            (formElement) => {
+              if (formElement.id === optionsForElementId.elementId) {
+                formElement.options = optionsForElementId.options
+              }
+            }
+          )
+        }
+      }
+
+      this.updateDefinition(clonedForm)
+    })()
   },
   methods: {
     updateSubmission(newSubmission: Record<string, unknown>) {
@@ -475,44 +511,6 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
       }
     }
   }
-  @Watch("definition", { immediate: true })
-  onDefinitionChanged() {
-    let ignore = false
-
-    ;(async () => {
-      const optionsByElementId = await formService.getFormElementDynamicOptions(
-        this.definition
-      )
-
-      if (ignore || !optionsByElementId.length) {
-        return
-      }
-
-      const nonOkResponse = optionsByElementId.find(
-        (optionsForElementId) => !optionsForElementId.ok
-      )
-      if (nonOkResponse && !nonOkResponse.ok) {
-        this.loadDynamicOptionsState = nonOkResponse
-        return
-      }
-
-      const clonedForm: FormTypes.Form = _cloneDeep(this.definition)
-      for (const optionsForElementId of optionsByElementId) {
-        if (optionsForElementId.ok) {
-          formElementsService.forEachFormElementWithOptions(
-            clonedForm.elements,
-            (formElement) => {
-              if (formElement.id === optionsForElementId.elementId) {
-                formElement.options = optionsForElementId.options
-              }
-            }
-          )
-        }
-      }
-
-      this.updateDefinition(clonedForm)
-    })()
-  }
 }
 </script>
 
@@ -772,89 +770,81 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
           </div>
         </div>
       </form>
-      <template v-if="!isReadOnly">
-        <Modal
-          :isOpen="hasConfirmedNavigation === false"
-          title="Unsaved Changes"
-          cardClassName="cypress-cancel-confirm"
-          titleClassName="cypress-cancel-confirm-title"
-          bodyClassName="cypress-cancel-confirm-body"
-        >
-          <template v-slot:actions>
-            <template>
-              <button
-                v-if="showSaveDraft"
-                type="button"
-                class="
-                  button
-                  ob-button
-                  is-success
-                  cypress-cancel-confirm-save-draft
-                "
-                @click="handleSaveDraft"
-              >
-                <CustomisableButtonInner
-                  :label="
-                    buttons && buttons.saveDraft
-                      ? buttons.saveDraft.label
-                      : 'Save Draft'
-                  "
-                  :icon="
-                    buttons && buttons.saveDraft
-                      ? buttons.saveDraft.icon
-                      : undefined
-                  "
-                />
-              </button>
 
-              <span style="flex: 1"></span>
+      <Modal
+        :isOpen="!isReadOnly && hasConfirmedNavigation === false"
+        title="Unsaved Changes"
+        cardClassName="cypress-cancel-confirm"
+        titleClassName="cypress-cancel-confirm-title"
+        bodyClassName="cypress-cancel-confirm-body"
+      >
+        <template v-slot:actions>
+          <button
+            v-if="showSaveDraft"
+            type="button"
+            class="
+              button
+              ob-button
+              is-success
+              cypress-cancel-confirm-save-draft
+            "
+            @click="handleSaveDraft"
+          >
+            <CustomisableButtonInner
+              :label="
+                buttons && buttons.saveDraft
+                  ? buttons.saveDraft.label
+                  : 'Save Draft'
+              "
+              :icon="
+                buttons && buttons.saveDraft
+                  ? buttons.saveDraft.icon
+                  : undefined
+              "
+            />
+          </button>
 
-              <button
-                type="button"
-                class="button ob-button is-light cypress-cancel-confirm-back"
-                @click="handleKeepGoing"
-              >
-                <CustomisableButtonInner
-                  :label="
-                    buttons && buttons.cancelPromptNo
-                      ? buttons.cancelPromptNo.label
-                      : 'Back'
-                  "
-                  :icon="
-                    buttons && buttons.cancelPromptNo
-                      ? buttons.cancelPromptNo.icon
-                      : undefined
-                  "
-                />
-              </button>
-              <button
-                type="button"
-                class="
-                  button
-                  ob-button
-                  is-primary
-                  cypress-cancel-confirm-discard
-                "
-                @click="handleDiscardUnsavedChanges"
-              >
-                <CustomisableButtonInner
-                  :label="
-                    buttons && buttons.cancelPromptYes
-                      ? buttons.cancelPromptYes.label
-                      : 'Discard'
-                  "
-                  :icon="
-                    buttons && buttons.cancelPromptYes
-                      ? buttons.cancelPromptYes.icon
-                      : undefined
-                  "
-                />
-              </button>
-            </template>
-          </template>
-          <p>You have unsaved changes, are you sure you want discard them?</p>
-        </Modal>
-      </template>
+          <span style="flex: 1"></span>
+
+          <button
+            type="button"
+            class="button ob-button is-light cypress-cancel-confirm-back"
+            @click="handleKeepGoing"
+          >
+            <CustomisableButtonInner
+              :label="
+                buttons && buttons.cancelPromptNo
+                  ? buttons.cancelPromptNo.label
+                  : 'Back'
+              "
+              :icon="
+                buttons && buttons.cancelPromptNo
+                  ? buttons.cancelPromptNo.icon
+                  : undefined
+              "
+            />
+          </button>
+          <button
+            type="button"
+            class="button ob-button is-primary cypress-cancel-confirm-discard"
+            @click="handleDiscardUnsavedChanges"
+          >
+            <CustomisableButtonInner
+              :label="
+                buttons && buttons.cancelPromptYes
+                  ? buttons.cancelPromptYes.label
+                  : 'Discard'
+              "
+              :icon="
+                buttons && buttons.cancelPromptYes
+                  ? buttons.cancelPromptYes.icon
+                  : undefined
+              "
+            />
+          </button>
+        </template>
+        <p>You have unsaved changes, are you sure you want discard them?</p>
+      </Modal>
     </div>
   </Fragment>
 </template>

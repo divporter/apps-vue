@@ -348,8 +348,7 @@ export default mixins(AttachmentMixin).extend({
     />
 
     <Modal
-      v-if="cameraError"
-      isOpen
+      :isOpen="cameraError"
       title="Whoops..."
       class="cypress-error-modal"
       titleClassName="cypress-error-title"

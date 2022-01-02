@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <!--OneBlinkForm
+    <!-- <OneBlinkForm
       v-if="definition"
       :definition="definition"
       googleMapsApiKey="AIzaSyDO61UD5hx75GEPeDvJozrQT-ipPO2PGTs"
@@ -13,8 +13,8 @@
       @saveDraft="onSaveDraft"
       @submit="onSubmit"
       @cancel="onCancel"
-    /-->
-    <OneBlinkFormControlled
+    /> -->
+    <!-- <OneBlinkFormControlled
       v-if="definition"
       :definition="definition"
       googleMapsApiKey="AIzaSyDO61UD5hx75GEPeDvJozrQT-ipPO2PGTs"
@@ -24,12 +24,28 @@
       @submit="onSubmit"
       @cancel="onCancel"
       @updateSubmission="updateSubmission"
+    /> -->
+    <OneBlinkAutoSaveForm
+      v-if="definition"
+      :definition="definition"
+      googleMapsApiKey="AIzaSyDO61UD5hx75GEPeDvJozrQT-ipPO2PGTs"
+      captchaSiteKey="6LfKybodAAAAAOANSfDlxPDNx5zcNuA4GrzCKWIt"
+      :initialSubmission="{
+        TField1: 'bye',
+        Number: 2,
+        Email: 'david@oneblink.io',
+      }"
+      @saveDraft="onSaveDraft"
+      @submit="onSubmit"
+      @cancel="onCancel"
+      autoSaveKey="otto"
     />
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from "vue"
+import OneBlinkAutoSaveForm from "./OneBlinkAutoSaveForm.vue"
 import OneBlinkForm from "./OneBlinkFormUncontrolled.vue"
 import OneBlinkFormControlled from "./OneBlinkFormControlled.vue"
 import { formService, submissionService } from "@oneblink/apps"
@@ -46,7 +62,8 @@ type DataProps = {
 export default Vue.extend({
   components: {
     // OneBlinkForm,
-    OneBlinkFormControlled,
+    // OneBlinkFormControlled,
+    OneBlinkAutoSaveForm,
   },
   data(): DataProps {
     return {
