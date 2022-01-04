@@ -119,7 +119,7 @@ export default class FormElementRadio extends FormElementRadioBase {
                   :active-class="'ob-radio__input-checked'"
                   :color="primaryColor || 'primary'"
                   :value="option.value"
-                  :ripple="!!option.value"
+                  :ripple="false"
                   :disabled="element.readOnly"
                   :label="option.label"
                   @change="setIsDirty"

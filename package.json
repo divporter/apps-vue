@@ -2,10 +2,10 @@
   "name": "oneblink-apps-vue",
   "main": "./dist/oneblink-apps-vue.common.js",
   "files": [
-    "./dist/*",
-    "./src/*"
+    "dist/*",
+    "src/*"
   ],
-  "version": "0.1.0",
+  "version": "0.1.5",
   "private": false,
   "description": "@oneblink/apps-react faithfully translated to Vue",
   "author": "David Porter <divporter@gmail.com>",
@@ -18,7 +18,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "build-library": "vue-cli-service build --target lib --name oneblink-apps-vue ./src/index.js"
+    "build-library": "vue-cli-service build --target lib --name oneblink-apps-vue ./src/index.js",
+    "build-library-watch": "vue-cli-service build --target lib --name oneblink-apps-vue --watch --mode production ./src/index.js"
   },
   "dependencies": {
     "@blinkmobile/geolocation": "^2.0.3",

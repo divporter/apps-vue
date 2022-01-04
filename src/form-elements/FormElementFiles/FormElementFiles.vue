@@ -148,17 +148,15 @@ export default Vue.extend({
     :validationMessage="validationMessage"
     @addFiles="addAttachments"
   >
-    <template v-slot>
-      <FormElementFile
-        v-for="(attachment, index) of attachments"
-        :key="index"
-        :element="element"
-        @remove="removeAttachment"
-        :value="attachment"
-        @changeAttachment="changeAttachment"
-        :disableUpload="disableUpload(attachment)"
-        @updateSubmission="updateSubmission"
-      />
-    </template>
+    <FormElementFile
+      v-for="(attachment, index) of attachments"
+      :key="index"
+      :element="element"
+      @remove="removeAttachment"
+      :value="attachment"
+      @changeAttachment="changeAttachment"
+      :disableUpload="disableUpload(attachment)"
+      @updateSubmission="updateSubmission"
+    />
   </Files>
 </template>

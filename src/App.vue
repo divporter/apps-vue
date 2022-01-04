@@ -3,8 +3,8 @@
     <!-- <OneBlinkForm
       v-if="definition"
       :definition="definition"
-      googleMapsApiKey="AIzaSyDO61UD5hx75GEPeDvJozrQT-ipPO2PGTs"
-      captchaSiteKey="6LfKybodAAAAAOANSfDlxPDNx5zcNuA4GrzCKWIt"
+      :googleMapsApiKey="process.env.VUE_APP_GOOGLE_MAPS_API_KEY"
+      :captchaSiteKey="process.env.VUE_APP_CAPTCHA_SITE_KEY"
       :initialSubmission="{
         TField1: 'bye',
         Number: 2,
@@ -17,8 +17,8 @@
     <!-- <OneBlinkFormControlled
       v-if="definition"
       :definition="definition"
-      googleMapsApiKey="AIzaSyDO61UD5hx75GEPeDvJozrQT-ipPO2PGTs"
-      captchaSiteKey="6LfKybodAAAAAOANSfDlxPDNx5zcNuA4GrzCKWIt"
+      :googleMapsApiKey="process.env.VUE_APP_GOOGLE_MAPS_API_KEY"
+      :captchaSiteKey="process.env.VUE_APP_CAPTCHA_SITE_KEY"
       :submission="submission"
       @saveDraft="onSaveDraft"
       @submit="onSubmit"
@@ -28,8 +28,8 @@
     <OneBlinkAutoSaveForm
       v-if="definition"
       :definition="definition"
-      googleMapsApiKey="AIzaSyDO61UD5hx75GEPeDvJozrQT-ipPO2PGTs"
-      captchaSiteKey="6LfKybodAAAAAOANSfDlxPDNx5zcNuA4GrzCKWIt"
+      googleMapsApiKey="process.env.VUE_APP_GOOGLE_MAPS_API_KEY"
+      captchaSiteKey="process.env.VUE_APP_CAPTCHA_SITE_KEY"
       :initialSubmission="{
         TField1: 'bye',
         Number: 2,
@@ -50,8 +50,9 @@ import OneBlinkForm from "./OneBlinkFormUncontrolled.vue"
 import OneBlinkFormControlled from "./OneBlinkFormControlled.vue"
 import { formService, submissionService } from "@oneblink/apps"
 import { FormTypes } from "@oneblink/types"
-import "@oneblink/apps-react/dist/styles.css"
 import { FormSubmissionModel } from "@/types/form"
+
+import "@oneblink/apps-react/dist/styles.css"
 
 type DataProps = {
   definition: FormTypes.Form | null
