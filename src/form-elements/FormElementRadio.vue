@@ -103,30 +103,30 @@ export default class FormElementRadio extends FormElementRadioBase {
     >
       <FormElementOptions :options="element.options">
         <div v-if="!element.buttons">
-          <v-radio-group :value="value" @change="updateSubmission">
-            <div
-              v-for="option of filteredOptions"
-              class="control"
-              :key="option.value"
+          <!--v-radio-group :value="value" @change="updateSubmission"-->
+          <div
+            v-for="option of filteredOptions"
+            class="control"
+            :key="option.value"
+          >
+            <label
+              class="radio ob-radio__input-label cypress-radio-label"
+              :for="id + '_' + option.value"
             >
-              <label
-                class="radio ob-radio__input-label cypress-radio-label"
-                :for="id + '_' + option.value"
-              >
-                <v-radio
-                  :key="option.id"
-                  class="ob-radio__input cypress-radio-control"
-                  :active-class="'ob-radio__input-checked'"
-                  :color="primaryColor || 'primary'"
-                  :value="option.value"
-                  :ripple="false"
-                  :disabled="element.readOnly"
-                  :label="option.label"
-                  @change="setIsDirty"
-                />
-              </label>
-            </div>
-          </v-radio-group>
+              <ui-radio
+                :model="value"
+                :value="option.value"
+                :class="[
+                  'ob-radio__input',
+                  'cypress-radio-control',
+                  value === option.value ? 'ob-radio__input-checked' : '',
+                ]"
+                :disabled="element.readOnly"
+                @change="updateSubmissionAndSetDirty"
+              />
+              {{ option.label }}
+            </label>
+          </div>
         </div>
 
         <div
@@ -169,3 +169,17 @@ export default class FormElementRadio extends FormElementRadioBase {
     </FormElementLabelContainer>
   </div>
 </template>
+
+<style scoped>
+.mdc-radio .mdc-radio__background:before {
+  background-color: unset;
+}
+
+.mdc-radio .mdc-radio__ripple:before {
+  background-color: unset;
+}
+
+.mdc-radio .mdc-radio__ripple:after {
+  background-color: unset;
+}
+</style>

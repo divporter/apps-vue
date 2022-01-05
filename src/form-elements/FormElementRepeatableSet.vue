@@ -77,8 +77,6 @@ export default Vue.extend({
       this.isDirty = true
     },
     updateSubmission(newEntries: Array<Record<string, unknown>>): void {
-      console.log("emitting from here too")
-      console.log("sending up ", newEntries)
       this.$emit("updateSubmission", {
         name: this.element.name,
         value: newEntries.length > 0 ? newEntries : undefined,
@@ -110,7 +108,6 @@ export default Vue.extend({
         return
       }
       const newEntries = (this.value || []).map((entry, i) => {
-        console.log(JSON.stringify(entry, null, 2))
         if (i === index) {
           return {
             ...entry,
@@ -120,7 +117,6 @@ export default Vue.extend({
           return entry
         }
       })
-      console.log(JSON.stringify(newEntries, null, 2))
       this.updateSubmission(newEntries)
     },
   },

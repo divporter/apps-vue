@@ -36,9 +36,6 @@ export default Vue.extend({
     idPrefix: { type: String, required: true },
     isEven: { type: Boolean, required: false },
   },
-  mounted() {
-    // console.log(this.element)
-  },
   methods: {
     updateSubmission({
       newSubmission,

@@ -4,6 +4,7 @@ import { FormTypes } from "@oneblink/types"
 import FormElementLabelContainer from "@/components/FormElementLabelContainer.vue"
 import LookupButton from "@/components/LookupButton.vue"
 import CopyToClipboardButton from "@/components/CopyToClipboardButton.vue"
+import SliderControl from "@/components/SliderControl.vue"
 
 type DataProps = {
   isDirty: boolean
@@ -14,6 +15,7 @@ export default Vue.extend({
     FormElementLabelContainer,
     LookupButton,
     CopyToClipboardButton,
+    SliderControl,
   },
   props: {
     id: { type: String, required: true },
@@ -32,19 +34,19 @@ export default Vue.extend({
     }
   },
   methods: {
-    updateSubmissionInput(event: { target: HTMLInputElement }) {
+    updateSubmission(event: { target: HTMLInputElement }) {
       const value = parseFloat(event.target.value)
       this.$emit("updateSubmission", {
         name: this.element.name,
         value: !Number.isNaN(value) ? value : undefined,
       })
     },
-    updateSubmissionSlider(input: number) {
-      this.$emit("updateSubmission", {
-        name: this.element.name,
-        value: input || undefined,
-      })
-    },
+    // updateSubmissionSlider(input: number) {
+    //   this.$emit("updateSubmission", {
+    //     name: this.element.name,
+    //     value: input || undefined,
+    //   })
+    // },
     setIsDirty() {
       this.isDirty = true
     },
@@ -65,8 +67,6 @@ export default Vue.extend({
     },
   },
 })
-
-//TODO recreate the apps-react slider (maybe)
 </script>
 
 <template>
@@ -87,7 +87,7 @@ export default Vue.extend({
             :id="id"
             :name="element.name"
             class="input ob-input cypress-number-control"
-            @input="updateSubmissionInput"
+            @input="updateSubmission"
             :required="element.required"
             :disabled="element.readOnly"
             @blur="setIsDirty"
@@ -113,30 +113,15 @@ export default Vue.extend({
           />
         </div>
       </div>
-      <v-slider
-        v-if="showSlider"
+      <SliderControl
         :id="id"
-        :label="element.label"
+        :text="text"
         :value="value"
-        @change="updateSubmissionSlider"
-        :disabled="element.readOnly"
-        :placeholder="element.placeholderValue"
-        :min="element.minNumber"
-        :max="element.maxNumber"
-        :step="element.sliderIncrement"
-        thumb-label="always"
+        :element="element"
+        @change="updateSubmission"
         @blur="setIsDirty"
       />
-      <!-- TODO implement this
-      <SliderControl
-        id="{id}"
-        text="{text}"
-        value="{value}"
-        element="{element}"
-        onChange="{handleChange}"
-        onBlur="{setIsDirty}"
-      />
-      -->
+
       <div
         v-if="(isDirty || displayValidationMessage) && !!validationMessage"
         role="alert"

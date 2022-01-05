@@ -133,7 +133,7 @@ export default Vue.extend({
               class="checkbox ob-checkbox__input-label cypress-checkbox-label"
               :for="id + '_' + option.value"
             >
-              <v-checkbox
+              <ui-checkbox
                 :id="id + '_' + option.value"
                 :class="{
                   'ob-checkbox__input': true,
@@ -142,15 +142,12 @@ export default Vue.extend({
                     option.value
                   ),
                 }"
-                dense
-                hide-details
-                :label="option.label"
                 :value="option.value"
-                :input-value="value || []"
-                :ripple="false"
+                :model="value || []"
                 :disabled="element.readOnly"
                 @change="updateSubmissionAndSetDirty"
               />
+              {{ option.label }}
             </label>
           </div>
         </div>
@@ -174,3 +171,27 @@ export default Vue.extend({
     </FormElementLabelContainer>
   </div>
 </template>
+
+<style scoped>
+.mdc-checkbox /deep/ .mdc-checkbox__background {
+  left: 0;
+  top: 0;
+  animation: none;
+}
+
+.mdc-checkbox /deep/ .mdc-checkbox__background path,
+.mdc-checkbox /deep/ .mdc-checkbox__background .mdc-checkbox__mixedmark {
+  animation: none;
+  transition: none;
+}
+
+.ob-checkbox__input:hover,
+.ob-checkbox__input:active,
+.ob-checkbox__input:focus {
+  background-color: none;
+}
+
+.mdc-checkbox /deep/ .mdc-checkbox__ripple {
+  opacity: 0;
+}
+</style>

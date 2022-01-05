@@ -339,7 +339,6 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
             }
           }
         )
-        console.log(indexOfPage)
         if (indexOfPage === -1) {
           return
         }

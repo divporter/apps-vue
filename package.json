@@ -5,7 +5,7 @@
     "dist/*",
     "src/*"
   ],
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": false,
   "description": "@oneblink/apps-react faithfully translated to Vue",
   "author": "David Porter <divporter@gmail.com>",
@@ -29,6 +29,7 @@
     "@types/blueimp-load-image": "^5.14.4",
     "@types/uuid": "^8.3.1",
     "abort-controller": "^3.0.0",
+    "balm-ui": "^8.47.1",
     "blueimp-load-image": "^5.16.0",
     "bulma-toast": "^2.4.1",
     "color": "^4.0.2",
@@ -38,6 +39,7 @@
     "flatpickr": "^4.6.9",
     "jsqr": "^1.4.0",
     "lodash.clonedeep": "^4.5.0",
+    "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "quagga": "^0.12.1",
     "sanitize-html": "^2.6.0",
@@ -50,8 +52,8 @@
     "vue-plugin-load-script": "^1.3.5",
     "vue-property-decorator": "^9.1.2",
     "vue-signature-pad": "2.0.4",
-    "vue-typed-mixins": "^0.2.0",
-    "vuetify": "^2.5.14"
+    "vue-tippy": "^4.13.0",
+    "vue-typed-mixins": "^0.2.0"
   },
   "devDependencies": {
     "@oneblink/types": "github:oneblink/types",
@@ -60,6 +62,7 @@
     "@types/google.maps": "^3.47.2",
     "@types/grecaptcha": "^3.0.3",
     "@types/lodash.clonedeep": "^4.5.6",
+    "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.throttle": "^4.1.6",
     "@types/sanitize-html": "^2.6.0",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
@@ -79,8 +82,6 @@
     "sass": "~1.32.0",
     "sass-loader": "^10.0.0",
     "typescript": "~4.1.5",
-    "vue-cli-plugin-vuetify": "~2.4.3",
-    "vue-template-compiler": "^2.6.11",
-    "vuetify-loader": "^1.7.0"
+    "vue-template-compiler": "^2.6.11"
   }
 }

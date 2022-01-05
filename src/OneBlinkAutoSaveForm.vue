@@ -134,7 +134,6 @@ export default class OneBlinkFormUncontrolled extends OneBlinkFormUncontrolledBa
   updateSubmission(newSubmission: Record<string, unknown>) {
     Vue.set(this, "submission", { ...this.submission, ...newSubmission })
     this.throttledAutoSave(this.submission)
-    console.log(JSON.stringify(this.submission, null, 2))
   }
 
   cancelAutoSave() {

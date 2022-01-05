@@ -24,7 +24,6 @@ export default Vue.extend({
     },
   },
   mounted() {
-    console.log(this.$refs)
     document.addEventListener("mousedown", this.handleClickOutside)
   },
   beforeDestroy() {

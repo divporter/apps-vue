@@ -1,8 +1,12 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 import { FormTypes } from "@oneblink/types"
+import { TippyComponent } from "vue-tippy"
 
 export default Vue.extend({
+  components: {
+    tippy: TippyComponent,
+  },
   props: {
     className: String,
     element: {
@@ -29,18 +33,20 @@ export default Vue.extend({
       >
         {{ element.label }}
       </label>
-      <v-tooltip v-if="element.hint" top>
-        <template v-slot:activator="{ on, attrs }">
-          <i
-            class="material-icons has-text-grey-light ob-label__hint"
-            v-bind="attrs"
-            v-on="on"
-          >
+      <tippy
+        v-if="element.hint"
+        arrow
+        theme="google"
+        size="large"
+        placement="bottom"
+      >
+        <template v-slot:trigger>
+          <i class="material-icons has-text-grey-light ob-label__hint">
             info
           </i>
         </template>
         {{ element.hint }}
-      </v-tooltip>
+      </tippy>
     </div>
     <slot></slot>
   </div>

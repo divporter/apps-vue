@@ -1,8 +1,12 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 import { FormTypes } from "@oneblink/types"
+import { TippyComponent } from "vue-tippy"
 
 export default Vue.extend({
+  components: {
+    tippy: TippyComponent,
+  },
   props: {
     page: { type: Object as PropType<FormTypes.PageElement>, required: true },
     currentPage: {
@@ -40,18 +44,20 @@ export default Vue.extend({
       :name="'cypress-page-stepper' + (index + 1)"
       :value="index + 1"
     >
-      <v-tooltip v-if="hasErrors">
-        <template v-slot:activator="{ on, attrs }">
-          <span
-            class="icon tooltip has-tooltip-top cypress-page-error"
-            v-bind="attrs"
-            v-on="on"
-          >
+      <tippy
+        v-if="hasErrors"
+        arrow
+        theme="google"
+        size="large"
+        placement="bottom"
+      >
+        <template v-slot:trigger>
+          <span class="icon tooltip has-tooltip-top cypress-page-error">
             <i class="material-icons has-text-danger is-size-3"> warning </i>
           </span>
         </template>
         Page has errors
-      </v-tooltip>
+      </tippy>
       <span v-else>{{ index + 1 }}</span>
     </div>
     <div class="step-details ob-step-details">

@@ -47,21 +47,17 @@ export default Vue.extend({
       :required="element.required"
     >
       <template v-slot:leading>
-        <v-switch
+        <ui-switch
           :id="id"
           :name="element.name"
-          color="primary"
           :class="{
             'ob-boolean__input': true,
             'cypress-boolean-control': true,
             'ob-boolean__input-checked': value,
           }"
-          :input-value="!!value"
-          :value="!!value"
+          :model="!!value"
           :disabled="element.readOnly"
           @change="updateSubmission"
-          :ripple="false"
-          :false-value="false"
         />
       </template>
       <div
@@ -76,3 +72,9 @@ export default Vue.extend({
     </FormElementLabelContainer>
   </div>
 </template>
+
+<style scoped>
+.mdc-switch {
+  padding-right: 12px;
+}
+</style>

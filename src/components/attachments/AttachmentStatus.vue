@@ -1,6 +1,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 import { Fragment } from "vue-frag"
+import { TippyComponent } from "vue-tippy"
 
 import UploadingAttachment from "./UploadingAttachment.vue"
 import { FormTypes } from "@oneblink/types"
@@ -8,6 +9,7 @@ import { checkIsUsingLegacyStorage } from "../../services/attachments"
 
 export default Vue.extend({
   components: {
+    tippy: TippyComponent,
     Fragment,
     UploadingAttachment,
   },
@@ -43,14 +45,18 @@ export default Vue.extend({
 
 <template>
   <Fragment>
-    <v-tooltip v-if="uploadError" top>
-      <template v-slot:activator="{ on, attrs }">
-        <i class="material-icons has-text-danger" v-bind="attrs" v-on="on">
-          error
-        </i>
+    <tippy
+      v-if="uploadError"
+      arrow
+      theme="google"
+      size="large"
+      placement="bottom"
+    >
+      <template v-slot:trigger>
+        <i class="material-icons has-text-danger"> error </i>
       </template>
       {{ uploadError.message }}
-    </v-tooltip>
+    </tippy>
     <template v-else-if="checkIsUsingLegacyStorage(element)"><!-- --></template>
     <template v-else-if="isUploading">
       <span v-if="isUploadPaused" class="attachment__status-wrapper">
@@ -58,13 +64,11 @@ export default Vue.extend({
       </span>
       <UploadingAttachment v-else />
     </template>
-    <v-tooltip v-else top>
-      <template v-slot:activator="{ on, attrs }">
-        <span class="attachment__status-wrapper" v-bind="attrs" v-on="on">
-          <i class="material-icons has-text-success">check_circle</i>
-        </span>
-      </template>
+    <tippy v-else arrow theme="google" size="large" placement="bottom">
+      <span class="attachment__status-wrapper">
+        <i class="material-icons has-text-success">check_circle</i>
+      </span>
       {{ tooltip }}
-    </v-tooltip>
+    </tippy>
   </Fragment>
 </template>

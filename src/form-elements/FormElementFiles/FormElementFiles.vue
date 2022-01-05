@@ -119,9 +119,7 @@ export default Vue.extend({
       }
     }) {
       const { id, attachment } = payload
-      console.log(attachment)
       if (attachment && !attachment.type) {
-        console.log(JSON.stringify(this.value, null, 2))
         this.$emit(
           "updateSubmission",
           this.value.map((att) => {

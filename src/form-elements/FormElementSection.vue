@@ -2,6 +2,7 @@
 import Vue, { PropType } from "vue"
 import { Component, Watch, Inject } from "vue-property-decorator"
 import { FormTypes } from "@oneblink/types"
+import { TippyComponent } from "vue-tippy"
 
 import { checkSectionValidity } from "../services/form-validation"
 import {
@@ -11,12 +12,15 @@ import {
 import { MergeLookupResults, LookupCallback } from "../types/lookups"
 
 type DataProps = {
-  panel: number[]
   isDisplayingError: boolean
+  expanded: boolean
+  wrapperSize: string
 }
 
 const FormElementSectionBase = Vue.extend({
-  components: {},
+  components: {
+    tippy: TippyComponent,
+  },
   props: {
     element: {
       type: Object as PropType<FormTypes.SectionElement>,
@@ -43,7 +47,8 @@ const FormElementSectionBase = Vue.extend({
   data(): DataProps {
     return {
       isDisplayingError: this.element.isCollapsed,
-      panel: !this.element.isCollapsed ? [0] : [],
+      expanded: !this.element.isCollapsed,
+      wrapperSize: "auto",
     }
   },
   computed: {
@@ -57,7 +62,7 @@ const FormElementSectionBase = Vue.extend({
       )
     },
     isCollapsed(): boolean {
-      return this.panel.length === 0
+      return !this.expanded
     },
   },
   methods: {
@@ -67,6 +72,23 @@ const FormElementSectionBase = Vue.extend({
     }): void {
       this.$emit("updateSubmission", event)
     },
+    setWrapperSize() {
+      // await Vue.nextTick()
+      let wrapperSize = 0
+      if (this.$refs.section) {
+        wrapperSize = (this.$refs.section as HTMLDivElement).clientHeight
+      }
+      this.wrapperSize = `${wrapperSize}px`
+    },
+    transitionEnd() {
+      if (!this.isCollapsed) {
+        this.wrapperSize = "auto"
+      }
+    },
+  },
+  mounted() {
+    Vue.nextTick().then(this.setWrapperSize)
+    // this.setWrapperSize()
   },
 })
 
@@ -86,6 +108,12 @@ export default class FormElementSection extends FormElementSectionBase {
   onIsCollapsedChange(newValue: boolean) {
     if (newValue && !this.isDisplayingError) {
       this.isDisplayingError = true
+    }
+
+    if (newValue) {
+      this.wrapperSize = "0px"
+    } else {
+      this.setWrapperSize()
     }
   }
 
@@ -126,94 +154,107 @@ export default class FormElementSection extends FormElementSectionBase {
 
 <template>
   <div :class="{ 'ob-section': true, 'ob-section__invalid': isInvalid }">
-    <v-expansion-panels v-model="panel" multiple>
-      <v-expansion-panel>
-        <v-expansion-panel-header>
-          <div>
-            <div class="ob-section__header cypress-section-header">
-              <h3 class="ob-section__header-text title is-3">
-                {{ element.label }}
-                <v-tooltip v-if="element.label && element.hint" top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <i
-                      class="material-icons has-text-grey-light ob-label__hint"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      info
-                    </i>
-                  </template>
-                  {{ element.hint }}
-                </v-tooltip>
-              </h3>
-              <div class="ob-section__header-icon-container">
-                <v-tooltip v-if="isInvalid" top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <i
-                      class="
-                        material-icons
-                        has-text-danger
-                        cypress-section-invalid-icon
-                        section-invalid-icon
-                        fade-in
-                      "
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      warning
-                    </i>
-                  </template>
-                  <span>Section has errors</span>
-                </v-tooltip>
-              </div>
+    <ui-collapse v-model="expanded">
+      <template v-slot:toggle>
+        <div>
+          <div class="ob-section__header cypress-section-header">
+            <h3 class="ob-section__header-text title is-3">
+              {{ element.label }}
+              <tippy
+                v-if="element.label && element.hint"
+                arrow
+                theme="google"
+                size="large"
+                placement="bottom"
+              >
+                <template v-slot:trigger>
+                  <i class="material-icons has-text-grey-light ob-label__hint">
+                    info
+                  </i>
+                </template>
+                {{ element.hint }}
+              </tippy>
+            </h3>
+            <div class="ob-section__header-icon-container">
+              <tippy
+                v-if="isInvalid"
+                arrow
+                theme="google"
+                size="large"
+                placement="bottom"
+              >
+                <template v-slot:trigger>
+                  <i
+                    class="
+                      material-icons
+                      has-text-danger
+                      cypress-section-invalid-icon
+                      section-invalid-icon
+                      fade-in
+                    "
+                  >
+                    warning
+                  </i>
+                </template>
+                <span>Section has errors</span>
+              </tippy>
+
+              <i
+                :class="{
+                  'ob-section__header-icon': true,
+                  'material-icons': true,
+                  'is-rotated': !isCollapsed,
+                }"
+              >
+                expand_more
+              </i>
             </div>
-            <hr class="ob-section__divider" />
           </div>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content
-          :class="{
-            'ob-section__content': true,
-            'ob-section__expanded': !isCollapsed,
-            'ob-section__collapsed': isCollapsed,
-          }"
-        >
-          <OneBlinkFormElements
-            :model="model"
-            :formElementsConditionallyShown="formElementsConditionallyShown"
-            :formElementsValidation="formElementsValidation"
-            :displayValidationMessages="displayValidationMessage"
-            :elements="element.elements"
-            :idPrefix="idPrefix"
-            @updateSubmission="updateSubmission"
-          />
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
+          <hr class="ob-section__divider" />
+        </div>
+      </template>
+    </ui-collapse>
+
+    <div
+      :style="{
+        height: wrapperSize,
+        '--wrapper-size': wrapperSize,
+        'min-height': '0px',
+        overflow: 'hidden',
+      }"
+      :class="{
+        'ob-section__content': true,
+        'ob-section__expanded': !isCollapsed,
+        'ob-section__collapsed': isCollapsed,
+      }"
+      @transitionend="transitionEnd"
+    >
+      <div ref="section">
+        <OneBlinkFormElements
+          :model="model"
+          :formElementsConditionallyShown="formElementsConditionallyShown"
+          :formElementsValidation="formElementsValidation"
+          :displayValidationMessages="displayValidationMessage"
+          :elements="element.elements"
+          :idPrefix="idPrefix"
+          @updateSubmission="updateSubmission"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.title.ob-section__header-text {
-  font-weight: 200;
-  line-height: 1.125;
-  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    "Helvetica", "Arial", sans-serif !important;
+.mdc-collapse /deep/ .mdc-collapse__header,
+.mdc-collapse /deep/ .mdc-collapse__title {
+  width: 100%;
 }
 
-.is-3 {
-  font-size: 2rem !important;
+.mdc-collapse /deep/ .mdc-collapse__content {
+  display: none;
 }
 
-.v-expansion-panel-header {
-  padding: 0;
-}
-
-.v-expansion-panel-content /deep/ .v-expansion-panel-content__wrap {
-  padding: 0;
-}
-
-.v-expansion-panel::before {
-  box-shadow: none;
+.ob-section__content {
+  transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 </style>

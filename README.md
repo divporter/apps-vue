@@ -1,5 +1,7 @@
 # apps-vue
 
+<!-- TODO write a readme for how to use me -->
+
 ## Project setup
 ```
 npm install

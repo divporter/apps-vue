@@ -180,8 +180,6 @@ export default Vue.extend({
         return
       }
 
-      console.log(JSON.stringify(this.value, null, 2))
-
       // If the value is string we will assume a base64 data uri
       if (typeof this.value === "string") {
         this.imageUrl = this.value
@@ -189,7 +187,6 @@ export default Vue.extend({
       }
 
       if (this.value.type) {
-        console.log("doing this")
         if (!checkIfContentTypeIsImage(this.value.data.type)) {
           // Not an image which we will represent as null
           this.imageUrl = null

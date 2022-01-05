@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <div>
     <!-- <OneBlinkForm
       v-if="definition"
       :definition="definition"
@@ -40,7 +40,7 @@
       @cancel="onCancel"
       autoSaveKey="otto"
     />
-  </v-app>
+  </div>
 </template>
 
 <script lang="ts">
@@ -53,6 +53,8 @@ import { FormTypes } from "@oneblink/types"
 import { FormSubmissionModel } from "@/types/form"
 
 import "@oneblink/apps-react/dist/styles.css"
+import "balm-ui-css"
+import "tippy.js/themes/google.css"
 
 type DataProps = {
   definition: FormTypes.Form | null
