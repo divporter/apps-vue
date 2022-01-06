@@ -19,7 +19,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build-library": "vue-cli-service build --target lib --name oneblink-apps-vue ./src/index.js",
-    "post-build-library": "copyfiles -u 2 ./src/styles/oneblink-apps-vue.scss ./dist/",
+    "postbuild-library": "copyfiles -u 2 ./src/styles/oneblink-apps-vue.scss ./dist/",
     "build-library-watch": "vue-cli-service build --target lib --name oneblink-apps-vue --watch --mode production ./src/index.js"
   },
   "dependencies": {
