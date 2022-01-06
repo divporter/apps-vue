@@ -11,13 +11,12 @@ import $theme from "balm-ui/plugins/theme"
 
 import OneBlinkForm from "./OneBlinkFormUncontrolled.vue"
 
-import "@oneblink/apps-react/dist/styles.css"
-import "balm-ui-css"
+import "@/styles/custom.scss"
 import "tippy.js/themes/google.css"
 
 //TODO add primary color option
 const OneBlinkFormComponents = {
-  install(Vue) {
+  install(Vue, { primary }) {
     Vue.config.ignoredElements = ["on-loading"]
     Vue.use(VueSignaturePad)
     Vue.use(LoadScript)
@@ -29,7 +28,7 @@ const OneBlinkFormComponents = {
     Vue.use(UiCollapse)
     Vue.directive(vRipple.name, vRipple)
     Vue.use($theme, {
-      secondary: "#4c8da7",
+      secondary: primary,
     })
 
     Vue.component("OneBlinkForm", OneBlinkForm)

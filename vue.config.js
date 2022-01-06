@@ -1,7 +1,6 @@
 module.exports = {
   transpileDependencies: ["color"],
   runtimeCompiler: true,
-  // NOTE: set alias via `configureWebpack` or `chainWebpack`
   configureWebpack: {
     resolve: {
       alias: {
@@ -10,9 +9,4 @@ module.exports = {
       },
     },
   },
-  // pages: {
-  //   index: {
-  //     entry: "src/index.ts",
-  //   },
-  // },
 }

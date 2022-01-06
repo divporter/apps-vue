@@ -91,6 +91,11 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
     }
   },
   mounted() {
+    if (this.primaryColor) {
+      //@ts-expect-error balm-ui
+      this.$theme.secondary = this.primaryColor
+    }
+
     this.currentPageId = this.visiblePages[0].id
     if (this.loadDynamicOptionsState) {
       return

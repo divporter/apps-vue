@@ -52,8 +52,8 @@ import { formService, submissionService } from "@oneblink/apps"
 import { FormTypes } from "@oneblink/types"
 import { FormSubmissionModel } from "@/types/form"
 
-import "@oneblink/apps-react/dist/styles.css"
-import "balm-ui-css"
+// import "@oneblink/apps-react/dist/styles.css"
+// import "balm-ui-css"
 import "tippy.js/themes/google.css"
 
 type DataProps = {
@@ -116,15 +116,15 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+@import "@/styles/custom.scss";
+
 .ob-input-icon {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.v-application {
-  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    "Helvetica", "Arial", sans-serif;
+.is-primary {
+  background-color: #ff0000;
 }
 </style>
