@@ -116,7 +116,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@import "@/styles/custom.scss";
+@import "@/styles/oneblink-apps-vue.scss";
 
 .ob-input-icon {
   display: flex;

@@ -11,7 +11,7 @@ import $theme from "balm-ui/plugins/theme"
 
 import OneBlinkForm from "./OneBlinkFormUncontrolled.vue"
 
-import "@/styles/custom.scss"
+import "@/styles/oneblink-apps-vue.scss"
 import "tippy.js/themes/google.css"
 
 //TODO add primary color option

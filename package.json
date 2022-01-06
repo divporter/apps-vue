@@ -19,6 +19,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build-library": "vue-cli-service build --target lib --name oneblink-apps-vue ./src/index.js",
+    "post-build-library": "copyfiles -u 2 ./src/styles/oneblink-apps-vue.scss ./dist/",
     "build-library-watch": "vue-cli-service build --target lib --name oneblink-apps-vue --watch --mode production ./src/index.js"
   },
   "dependencies": {
@@ -73,6 +74,7 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
