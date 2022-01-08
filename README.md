@@ -51,6 +51,7 @@ Note: you will still need to do the above (create a scss file) to import the sty
 
 - [OneBlinkForm](#OneBlinkForm)
 - [OneBlinkAutoSaveForm](#OneBlinkAutoSaveForm)
+- [OneBlinkFormControlled](#OneBlinkFormControlled)
 
 ### `<OneBlinkForm />`
 
