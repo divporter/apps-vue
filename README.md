@@ -121,7 +121,7 @@ Inherits properties from [`FormSubmission`](#formsubmission)
 ```html
 <script>
 //Form.vue
-import Vue from "vue
+import Vue from "vue"
 import { FormTypes } from '@oneblink/types'
 import {
   OneBlinkAppsError,
@@ -299,14 +299,14 @@ Has the same events as [`<OneBlinkForm />`](#oneblink-form-events) as well as:
 
 | Event | Type | Description |
 | -- | --| -- |
-| `updateSubmission` | (FormSubmission) => void | Event for handling the form definition or submission data changing. Emitted whenever the submission model changes |
+| `updateSubmission` | (FormSubmission) => void | Emitted whenever the submission model changes. Can be used to override the submission data or form definition |
 
 #### Example
 
 ```html
 <script>
 //Form.vue
-import Vue from "vue
+import Vue from "vue"
 import { FormTypes } from '@oneblink/types'
 import {
   OneBlinkAppsError,
@@ -428,7 +428,7 @@ export default Vue.extend({
       submission: FormSubmissionModel
       definition: FormTypes.Form
     }) {
-      // modifty the definition or submission here
+      // modify the definition or submission here
       Vue.set(this, "submission", newSubmission)
       Vue.set(this, "definition", definition)
     },
