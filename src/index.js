@@ -11,12 +11,11 @@ import $theme from "balm-ui/plugins/theme"
 
 import OneBlinkForm from "./OneBlinkFormUncontrolled.vue"
 
-import "@/styles/oneblink-apps-vue.scss"
 import "tippy.js/themes/google.css"
 
 //TODO add primary color option
 const OneBlinkFormComponents = {
-  install(Vue, { primary }) {
+  install(Vue, { primary } = {}) {
     Vue.config.ignoredElements = ["on-loading"]
     Vue.use(VueSignaturePad)
     Vue.use(LoadScript)
