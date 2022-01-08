@@ -13,7 +13,6 @@ import OneBlinkForm from "./OneBlinkFormUncontrolled.vue"
 
 import "tippy.js/themes/google.css"
 
-//TODO add primary color option
 const OneBlinkFormComponents = {
   install(Vue, { primary } = {}) {
     Vue.config.ignoredElements = ["on-loading"]
