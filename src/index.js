@@ -27,9 +27,14 @@ const OneBlinkFormComponents = {
     Vue.use(UiSwitch)
     Vue.use(UiCollapse)
     Vue.directive(vRipple.name, vRipple)
-    Vue.use($theme, {
-      secondary: primary,
-    })
+    Vue.use(
+      $theme,
+      primary
+        ? {
+            secondary: primary,
+          }
+        : undefined
+    )
 
     Vue.component("OneBlinkForm", OneBlinkForm)
   },

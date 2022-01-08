@@ -116,15 +116,12 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+$primary: #FF0000;
 @import "@/styles/oneblink-apps-vue.scss";
 
 .ob-input-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.is-primary {
-  background-color: #ff0000;
 }
 </style>
