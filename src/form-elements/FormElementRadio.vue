@@ -77,7 +77,7 @@ const FormElementRadioBase = Vue.extend({
 export default class FormElementRadio extends FormElementRadioBase {
   @InjectReactive() primaryColor?: string
   @Watch("value")
-  onValueChanged(newValue: string | undefined) {
+  onValueChange(newValue: string | undefined) {
     if (!this.element.options) {
       return
     }

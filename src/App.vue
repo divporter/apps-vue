@@ -1,10 +1,10 @@
 <template>
   <div>
-    <!-- <OneBlinkForm
-      v-if="definition"
+    <OneBlinkForm
+      v-if="formType === 'uncontrolled' && definition"
       :definition="definition"
-      :googleMapsApiKey="process.env.VUE_APP_GOOGLE_MAPS_API_KEY"
-      :captchaSiteKey="process.env.VUE_APP_CAPTCHA_SITE_KEY"
+      :googleMapsApiKey="googleMapsApiKey"
+      :captchaSiteKey="captchaSiteKey"
       :initialSubmission="{
         TField1: 'bye',
         Number: 2,
@@ -13,23 +13,23 @@
       @saveDraft="onSaveDraft"
       @submit="onSubmit"
       @cancel="onCancel"
-    /> -->
-    <!-- <OneBlinkFormControlled
-      v-if="definition"
+    />
+    <OneBlinkFormControlled
+      v-else-if="formType === 'controlled' && definition"
       :definition="definition"
-      :googleMapsApiKey="process.env.VUE_APP_GOOGLE_MAPS_API_KEY"
-      :captchaSiteKey="process.env.VUE_APP_CAPTCHA_SITE_KEY"
+      :googleMapsApiKey="googleMapsApiKey"
+      :captchaSiteKey="captchaSiteKey"
       :submission="submission"
       @saveDraft="onSaveDraft"
       @submit="onSubmit"
       @cancel="onCancel"
       @updateSubmission="updateSubmission"
-    /> -->
+    />
     <OneBlinkAutoSaveForm
-      v-if="definition"
+      v-else-if="formType === 'autoSave' && definition"
       :definition="definition"
-      googleMapsApiKey="process.env.VUE_APP_GOOGLE_MAPS_API_KEY"
-      captchaSiteKey="process.env.VUE_APP_CAPTCHA_SITE_KEY"
+      :googleMapsApiKey="googleMapsApiKey"
+      :captchaSiteKey="captchaSiteKey"
       :initialSubmission="{
         TField1: 'bye',
         Number: 2,
@@ -40,6 +40,20 @@
       @cancel="onCancel"
       autoSaveKey="otto"
     />
+    <OneBlinkReadOnlyForm
+      v-else-if="formType === 'readOnly' && definition"
+      :definition="definition"
+      :googleMapsApiKey="googleMapsApiKey"
+      :captchaSiteKey="captchaSiteKey"
+      :initialSubmission="{
+        TField1: 'bye',
+        Number: 2,
+        Email: 'david@oneblink.io',
+      }"
+      @saveDraft="onSaveDraft"
+      @submit="onSubmit"
+      @cancel="onCancel"
+    />
   </div>
 </template>
 
@@ -48,25 +62,26 @@ import Vue from "vue"
 import OneBlinkAutoSaveForm from "./OneBlinkAutoSaveForm.vue"
 import OneBlinkForm from "./OneBlinkFormUncontrolled.vue"
 import OneBlinkFormControlled from "./OneBlinkFormControlled.vue"
+import OneBlinkReadOnlyForm from "./OneBlinkReadOnlyForm.vue"
 import { formService, submissionService } from "@oneblink/apps"
 import { FormTypes } from "@oneblink/types"
 import { FormSubmissionModel } from "@/types/form"
 
-// import "@oneblink/apps-react/dist/styles.css"
-// import "balm-ui-css"
 import "tippy.js/themes/google.css"
 
 type DataProps = {
   definition: FormTypes.Form | null
   loading: boolean
   submission: FormSubmissionModel
+  formType: "uncontrolled" | "controlled" | "autoSave" | "readOnly"
 }
 
 export default Vue.extend({
   components: {
-    // OneBlinkForm,
-    // OneBlinkFormControlled,
+    OneBlinkForm,
+    OneBlinkFormControlled,
     OneBlinkAutoSaveForm,
+    OneBlinkReadOnlyForm,
   },
   data(): DataProps {
     return {
@@ -77,7 +92,16 @@ export default Vue.extend({
         Number: 2,
         Email: "david@oneblink.io",
       },
+      formType: "uncontrolled",
     }
+  },
+  computed: {
+    googleMapsApiKey(): string {
+      return process.env.VUE_APP_GOOGLE_MAPS_API_KEY || ""
+    },
+    captchaSiteKey(): string {
+      return process.env.VUE_APP_CAPTCHA_SITE_KEY || ""
+    },
   },
   async mounted() {
     this.loading = true
@@ -116,7 +140,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-$primary: #FF0000;
+$primary: #ff0000;
 @import "@/styles/oneblink-apps-vue.scss";
 
 .ob-input-icon {

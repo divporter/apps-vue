@@ -13,7 +13,7 @@ type DataProps = {
   clonedDefinition: FormTypes.Form
 }
 
-const OneBlinkFormUncontrolledBase = Vue.extend({
+const OneBlinkReadOnlyFormBase = Vue.extend({
   components: {
     OneBlinkFormBase,
   },
@@ -41,54 +41,83 @@ const OneBlinkFormUncontrolledBase = Vue.extend({
     }
   },
   computed: {
-    showSaveDraft(): boolean {
-      return this.$listeners && !!this.$listeners["saveDraft"]
+    readOnlyDefinition(): FormTypes.Form {
+      return {
+        ...this.clonedDefinition,
+        elements: this.recursivelySetReadOnly(this.clonedDefinition.elements),
+      }
     },
   },
   methods: {
+    recursivelySetReadOnly(
+      elements: FormTypes.FormElement[]
+    ): FormTypes.FormElement[] {
+      const newElements = elements
+        .filter((element) => element.type !== "captcha")
+        .map((element) => {
+          if (
+            (element.type === "form" ||
+              element.type === "section" ||
+              element.type === "page" ||
+              element.type === "repeatableSet") &&
+            Array.isArray(element.elements)
+          ) {
+            return {
+              ...element,
+              readOnly: true,
+              elements: this.recursivelySetReadOnly(element.elements) || [],
+            }
+          }
+
+          if (
+            element.type !== "section" &&
+            element.type !== "heading" &&
+            element.type !== "page" &&
+            element.type !== "html" &&
+            element.type !== "captcha" &&
+            element.type !== "image" &&
+            element.type !== "calculation" &&
+            element.type !== "summary" &&
+            element.type !== "form" &&
+            element.type !== "infoPage"
+          ) {
+            return {
+              ...element,
+              readOnly: true,
+            }
+          }
+
+          return element
+        })
+
+      return newElements
+    },
     updateSubmission(newSubmission: Record<string, unknown>) {
-      console.log(
-        JSON.stringify({ ...this.submission, ...newSubmission }, null, 2)
-      )
       Vue.set(this, "submission", { ...this.submission, ...newSubmission })
     },
     updateDefinition(newDefinition: FormTypes.Form) {
       Vue.set(this, "clonedDefinition", newDefinition)
     },
-    handleCancel() {
-      this.$emit("cancel")
-    },
-    handleSaveDraft(event: unknown) {
-      this.$emit("saveDraft", event)
-    },
-    handleSubmit(event: unknown) {
-      this.$emit("submit", event)
-    },
   },
 })
 
 @Component
-export default class OneBlinkFormUncontrolled extends OneBlinkFormUncontrolledBase {
+export default class OneBlinkReadOnlyForm extends OneBlinkReadOnlyFormBase {
   @ProvideReactive() submission: Record<string, unknown> = this.submission
 }
 </script>
 
 <template>
   <OneBlinkFormBase
-    :definition="clonedDefinition"
-    @updateDefinition="updateDefinition"
+    :definition="readOnlyDefinition"
     :submission="submission"
-    @updateSubmission="updateSubmission"
-    :isReadOnly="isReadOnly"
+    :isReadOnly="true"
     :googleMapsApiKey="googleMapsApiKey"
     :captchaSiteKey="captchaSiteKey"
     :isPreview="isPreview"
-    :disabled="disabled"
+    :disabled="true"
     :buttons="buttons"
-    @cancel="handleCancel"
-    @saveDraft="handleSaveDraft"
-    @submit="handleSubmit"
-    :showSaveDraft="showSaveDraft"
+    :showSaveDraft="false"
     :primaryColor="primaryColor"
   />
 </template>

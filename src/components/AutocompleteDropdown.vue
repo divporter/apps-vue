@@ -119,6 +119,8 @@ const AutocompleteDropdownBase = Vue.extend({
         return
       }
 
+      event.preventDefault()
+
       const previousFocusedOptionIndex = this.currentFocusedOptionIndex
       let nextFocusedOptionIndex = this.currentFocusedOptionIndex
       if (upArrowPressed) {
@@ -156,6 +158,7 @@ const AutocompleteDropdownBase = Vue.extend({
       }
     },
     handleChangeLabel(e: { target: HTMLInputElement }) {
+      console.log("I've been called")
       const newLabel = e.target.value
       this.isOpen = true
       this.currentFocusedOptionIndex = 0
@@ -261,7 +264,7 @@ export default class AutocompleteDropdown extends AutocompleteDropdownBase {
             :disabled="disabled"
             @focus="focus"
             @blur="handleBlur"
-            @keydown.prevent="onKeyDown"
+            @keydown="onKeyDown"
             @input="handleChangeLabel"
           />
           <span

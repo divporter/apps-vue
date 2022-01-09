@@ -36,8 +36,10 @@ import FormElementCaptcha from "@/form-elements/FormElementCaptcha.vue"
 import FormElementSummary from "@/form-elements/FormElementSummary.vue"
 import FormElementCompliance from "@/form-elements/FormElementCompliance.vue"
 import FormElementBarcodeScanner from "@/form-elements/FormElementBarcodeScanner.vue"
+import FormElementGeoscapeAddress from "@/form-elements/FormElementGeoscapeAddress.vue"
+import FormElementPointAddress from "@/form-elements/FormElementPointAddress.vue"
 
-const FormElementBase = Vue.extend({
+export default Vue.extend({
   components: {
     LookupNotification,
     FormElementText,
@@ -67,6 +69,8 @@ const FormElementBase = Vue.extend({
     FormElementSummary,
     FormElementCompliance,
     FormElementBarcodeScanner,
+    FormElementGeoscapeAddress,
+    FormElementPointAddress
   },
   props: {
     element: {
@@ -134,14 +138,6 @@ const FormElementBase = Vue.extend({
     },
   },
 })
-
-export default class FormElement extends FormElementBase {
-  // beforeCreate() {
-  //   if (this.$options.components) {
-  //     this.$options.components.FormElementForm = require("../form-elements/FormElementForm.vue")
-  //   }
-  // }
-}
 </script>
 
 <template>
@@ -499,6 +495,44 @@ export default class FormElement extends FormElementBase {
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementBarcodeScanner
+          :key="element.id"
+          :id="id"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          @updateSubmission="updateSubmission"
+          @triggerLookup="triggerLookup"
+        />
+      </template>
+    </LookupNotification>
+    <LookupNotification
+      :element="element"
+      :model="model"
+      v-if="element.type === 'geoscapeAddress'"
+    >
+      <template v-slot:default="{ triggerLookup, isLookup }">
+        <FormElementGeoscapeAddress
+          :key="element.id"
+          :id="id"
+          :element="element"
+          :value="value"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          @updateSubmission="updateSubmission"
+          @triggerLookup="triggerLookup"
+        />
+      </template>
+    </LookupNotification>
+    <LookupNotification
+      :element="element"
+      :model="model"
+      v-if="element.type === 'pointAddress'"
+    >
+      <template v-slot:default="{ triggerLookup, isLookup }">
+        <FormElementPointAddress
           :key="element.id"
           :id="id"
           :element="element"

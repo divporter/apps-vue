@@ -1,25 +1,25 @@
-import { CivicaTypes, FormTypes, GeoscapeTypes } from '@oneblink/types'
-import { FormElementComplianceValue as ComplianceValue } from '@/types/compliance'
+import { CivicaTypes, FormTypes, GeoscapeTypes } from "@oneblink/types"
+import { FormElementComplianceValue as ComplianceValue } from "@/types/compliance"
 import {
   FormElementsConditionallyShown,
   FormSubmissionModel,
-} from '../types/form'
+} from "../types/form"
 
 function cleanElementValue(
   submission: FormSubmissionModel,
   elements: FormTypes.FormElement[],
   formElementsConditionallyShown: FormElementsConditionallyShown | undefined,
   stripBinaryData: boolean,
-  captchaTokens: string[],
+  captchaTokens: string[]
 ): FormSubmissionModel {
   // Clear data from submission on fields that are hidden on visible pages
   return elements.reduce<FormSubmissionModel>((model, element) => {
     switch (element.type) {
       // For content element types, we just need to set true for shown and false for hidden.
       // This is to allow renderers of the data to know when to show/hide the content
-      case 'image':
-      case 'heading':
-      case 'html': {
+      case "image":
+      case "heading":
+      case "html": {
         if (
           !stripBinaryData &&
           !formElementsConditionallyShown?.[element.name]?.isHidden
@@ -30,17 +30,17 @@ function cleanElementValue(
       }
       // Need to remove captcha tokens and save
       // them to POST them to the server for validation
-      case 'captcha': {
+      case "captcha": {
         const token = submission[element.name]
-        if (typeof token === 'string') {
+        if (typeof token === "string") {
           captchaTokens.push(token)
         }
         break
       }
-      case 'camera':
-      case 'files':
-      case 'file':
-      case 'draw': {
+      case "camera":
+      case "files":
+      case "file":
+      case "draw": {
         if (
           !stripBinaryData &&
           !formElementsConditionallyShown?.[element.name]?.isHidden
@@ -49,8 +49,8 @@ function cleanElementValue(
         }
         break
       }
-      case 'infoPage':
-      case 'form': {
+      case "infoPage":
+      case "form": {
         // Here we will check to make sure that each embedded form
         // also has its values wiped if the element is hidden based on conditional logic
         const nestedElements = element.elements
@@ -66,16 +66,16 @@ function cleanElementValue(
           model[element.name] = cleanElementValue(
             nestedModel || {},
             nestedElements,
-            nestedFormElementConditionallyShown?.type === 'formElements'
+            nestedFormElementConditionallyShown?.type === "formElements"
               ? nestedFormElementConditionallyShown.formElements
               : undefined,
             stripBinaryData,
-            captchaTokens,
+            captchaTokens
           )
         }
         break
       }
-      case 'repeatableSet': {
+      case "repeatableSet": {
         // Here we will check to make sure that each repeatable set entry
         // also has its values wiped if the element is hidden based on conditional logic
         const nestedElements = element.elements
@@ -94,17 +94,17 @@ function cleanElementValue(
             return cleanElementValue(
               entry || {},
               nestedElements,
-              formElementConditionallyShown?.type === 'repeatableSet'
+              formElementConditionallyShown?.type === "repeatableSet"
                 ? formElementConditionallyShown.entries?.[index.toString()]
                 : undefined,
               stripBinaryData,
-              captchaTokens,
+              captchaTokens
             )
           })
         }
         break
       }
-      case 'civicaNameRecord': {
+      case "civicaNameRecord": {
         const civicaNameRecord = submission[element.name] as
           | CivicaTypes.CivicaNameRecord
           | undefined
@@ -133,7 +133,7 @@ function cleanElementValue(
 
           const streetAddresses = civicaNameRecord.streetAddress.map(
             (streetAddress) => {
-              if (typeof streetAddress.address1 === 'object') {
+              if (typeof streetAddress.address1 === "object") {
                 const geoscapeAddress = streetAddress.address1 as
                   | GeoscapeTypes.GeoscapeAddress
                   | undefined
@@ -144,13 +144,13 @@ function cleanElementValue(
                     geoscapeAddress?.addressDetails?.streetType,
                   ]
                     .filter((str) => !!str)
-                    .join(' '),
+                    .join(" "),
                   address2: geoscapeAddress?.addressDetails?.localityName,
                   postcode: geoscapeAddress?.addressDetails?.postcode,
                 }
               }
               return streetAddress
-            },
+            }
           )
           model[element.name] = {
             ...civicaNameRecord,
@@ -159,7 +159,7 @@ function cleanElementValue(
         }
         break
       }
-      case 'compliance': {
+      case "compliance": {
         if (
           formElementsConditionallyShown?.[element.name]?.isHidden ||
           !submission[element.name]
@@ -176,15 +176,15 @@ function cleanElementValue(
         }
         break
       }
-      case 'page':
-      case 'section': {
+      case "page":
+      case "section": {
         if (!formElementsConditionallyShown?.[element.id]?.isHidden) {
           const nestedModel = cleanElementValue(
             submission,
             element.elements,
             formElementsConditionallyShown,
             stripBinaryData,
-            captchaTokens,
+            captchaTokens
           )
           Object.assign(model, nestedModel)
         }
@@ -205,7 +205,7 @@ export default function cleanFormSubmissionModel(
   submission: FormSubmissionModel,
   elements: FormTypes.FormElement[],
   formElementsConditionallyShown: FormElementsConditionallyShown | undefined,
-  stripBinaryData: boolean,
+  stripBinaryData: boolean
 ): {
   model: FormSubmissionModel
   captchaTokens: string[]
@@ -217,7 +217,7 @@ export default function cleanFormSubmissionModel(
     elements,
     formElementsConditionallyShown,
     stripBinaryData,
-    captchaTokens,
+    captchaTokens
   )
   return {
     model,

@@ -1,50 +1,50 @@
-import { FormTypes } from '@oneblink/types'
-import { Attachment } from '../types/attachments'
-import { FormElementComplianceValue } from '@/types/compliance'
-import { checkIsUsingLegacyStorage } from './attachments'
-import { FormSubmissionModel } from '../types/form'
+import { FormTypes } from "@oneblink/types"
+import { Attachment } from "../types/attachments"
+import { FormElementComplianceValue } from "@/types/compliance"
+import { checkIsUsingLegacyStorage } from "./attachments"
+import { FormSubmissionModel } from "../types/form"
 
 function checkIfAttachmentsAreUploadingForFormElements(
   formElements: FormTypes.FormElement[],
-  submission: FormSubmissionModel,
+  submission: FormSubmissionModel
 ): boolean {
   return formElements.some((formElement) => {
     switch (formElement.type) {
-      case 'page': {
+      case "page": {
         return checkIfAttachmentsAreUploadingForFormElements(
           formElement.elements,
-          submission,
+          submission
         )
       }
-      case 'form': {
+      case "form": {
         const nestedSubmission = submission[formElement.name]
-        if (!nestedSubmission || typeof nestedSubmission !== 'object') {
+        if (!nestedSubmission || typeof nestedSubmission !== "object") {
           break
         }
         return checkIfAttachmentsAreUploadingForFormElements(
           formElement.elements || [],
-          nestedSubmission as FormSubmissionModel,
+          nestedSubmission as FormSubmissionModel
         )
       }
-      case 'repeatableSet': {
+      case "repeatableSet": {
         const entries = submission[formElement.name]
         if (!Array.isArray(entries)) {
           break
         }
         return entries.some((entry) => {
           return (
-            typeof entry === 'object' &&
+            typeof entry === "object" &&
             checkIfAttachmentsAreUploadingForFormElements(
               formElement.elements,
-              entry,
+              entry
             )
           )
         })
       }
-      case 'camera':
-      case 'draw':
-      case 'compliance':
-      case 'files': {
+      case "camera":
+      case "draw":
+      case "compliance":
+      case "files": {
         if (checkIsUsingLegacyStorage(formElement)) {
           break
         }
@@ -56,16 +56,16 @@ function checkIfAttachmentsAreUploadingForFormElements(
 
         // If the attachment has a type, it has not finished uploading
         switch (formElement.type) {
-          case 'camera':
-          case 'draw': {
+          case "camera":
+          case "draw": {
             return !!(value as Attachment)?.type
           }
-          case 'compliance': {
+          case "compliance": {
             return (value as FormElementComplianceValue).files?.some((file) => {
               return !!(file as Attachment)?.type
             })
           }
-          case 'files': {
+          case "files": {
             return (value as Attachment[])?.some((attachment) => {
               return !!attachment?.type
             })
@@ -78,10 +78,10 @@ function checkIfAttachmentsAreUploadingForFormElements(
 
 export default function checkIfAttachmentsAreUploading(
   form: FormTypes.Form,
-  submission: FormSubmissionModel,
+  submission: FormSubmissionModel
 ): boolean {
   return checkIfAttachmentsAreUploadingForFormElements(
     form.elements,
-    submission,
+    submission
   )
 }
