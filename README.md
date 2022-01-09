@@ -470,7 +470,7 @@ export default Vue.extend({
 ```
 
 ## TODO
-- [ ] `<OneBlinkReadOnlyForm />`
+- [x] `<OneBlinkReadOnlyForm />`
 - [ ] Auto save with controlled form docs
 - [ ] BSB Element
 - [ ] ABN Element
