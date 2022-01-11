@@ -39,33 +39,3 @@ export default Vue.extend({
     </div>
   </div>
 </template>
-
-<style scoped>
-.title.ob-heading__text {
-  font-weight: 200;
-  line-height: 1.125;
-  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    "Helvetica", "Arial", sans-serif !important;
-}
-.is-1 {
-  font-size: 3rem !important;
-}
-
-.is-2 {
-  font-size: 2.5rem !important;
-}
-
-.is-3 {
-  font-size: 2rem !important;
-}
-
-.is-4 {
-  font-size: 1.5rem !important;
-}
-
-.is-5 {
-  font-weight: 300;
-  font-size: 1.25rem !important;
-}
-</style>

@@ -469,6 +469,10 @@ export default Vue.extend({
 </template>
 ```
 
+## Known Issues
+
+- [Recaptcha element causing browser to crash](https://github.com/google/recaptcha/issues/269)
+
 ## TODO
 - [x] `<OneBlinkReadOnlyForm />`
 - [ ] Auto save with controlled form docs

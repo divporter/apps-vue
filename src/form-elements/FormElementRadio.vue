@@ -23,8 +23,7 @@ const FormElementRadioBase = Vue.extend({
     validationMessage: { type: String, required: false },
     conditionallyShownOptions: Array as PropType<
       FormTypes.ChoiceElementOption[]
-    >,
-    isLookup: Boolean,
+    >
   },
   data() {
     return {

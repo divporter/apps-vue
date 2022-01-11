@@ -25,7 +25,7 @@
   "dependencies": {
     "@blinkmobile/geolocation": "^2.0.3",
     "@googlemaps/js-api-loader": "^1.12.11",
-    "@oneblink/apps": "^0.11.7",
+    "@oneblink/apps": "^0.11.2",
     "@oneblink/apps-react": "^0.4.20",
     "@types/blueimp-load-image": "^5.14.4",
     "@types/uuid": "^8.3.1",

@@ -29,7 +29,6 @@ const FormElementAutocompleteBase = Vue.extend({
     conditionallyShownOptions: Array as PropType<
       FormTypes.ChoiceElementOption[]
     >,
-    isLookup: Boolean,
   },
   data() {
     return {

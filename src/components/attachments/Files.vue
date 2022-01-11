@@ -18,7 +18,6 @@ export default Vue.extend({
     attachments: Array,
     displayValidationMessage: Boolean,
     validationMessage: String,
-    isLookup: Boolean,
   },
   methods: {
     handleAdd() {

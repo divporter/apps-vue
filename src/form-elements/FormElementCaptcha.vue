@@ -29,9 +29,7 @@ const FormElementCaptchaBase = mixins(IsOfflineMixin).extend({
             grecaptcha.render(this.$refs.recaptcha as HTMLElement, {
               //@ts-expect-error injected prop
               sitekey: this.captchaSiteKey,
-              badge: "bottomright",
               size: "normal",
-              type: "image",
               callback: (token: string) => {
                 this.$emit("updateSubmission", {
                   name: this.element.name,
@@ -46,19 +44,22 @@ const FormElementCaptchaBase = mixins(IsOfflineMixin).extend({
         })
     },
   },
-  mounted() {
-    this.initGRecaptcha()
-  },
 })
 
 @Component
 export default class FormElementCaptchaComponent extends FormElementCaptchaBase {
-  @Watch("isOffline")
+  @Watch("isOffline", { immediate: true })
   isOfflineChange(newValue: boolean) {
     //user is online
     if (!newValue) {
       this.initGRecaptcha()
     }
+  }
+
+  beforeDestroy() {
+    console.log("getting destroyed")
+    // eslint-disable-next-line no-undef
+    grecaptcha.reset()
   }
 }
 </script>

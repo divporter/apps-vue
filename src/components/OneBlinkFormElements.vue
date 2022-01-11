@@ -57,9 +57,9 @@ export default Vue.extend({
         :key="element.id"
         v-if="
           element.type === 'section' &&
-          formElementsConditionallyShown &&
-          formElementsConditionallyShown[element.id] &&
-          !formElementsConditionallyShown[element.id].isHidden
+          (!formElementsConditionallyShown ||
+            !formElementsConditionallyShown[element.id] ||
+            !formElementsConditionallyShown[element.id].isHidden)
         "
         class="ob-element cypress-element-container"
       >
@@ -79,9 +79,9 @@ export default Vue.extend({
         v-if="
           element.type !== 'section' &&
           element.type !== 'page' &&
-          formElementsConditionallyShown &&
-          formElementsConditionallyShown[element.name] &&
-          !formElementsConditionallyShown[element.name].isHidden
+          (!formElementsConditionallyShown ||
+            !formElementsConditionallyShown[element.name] ||
+            !formElementsConditionallyShown[element.name].isHidden)
         "
         :element="element"
         :model="model"
@@ -94,7 +94,9 @@ export default Vue.extend({
             : undefined
         "
         :formElementConditionallyShown="
-          formElementsConditionallyShown[element.name]
+          formElementsConditionallyShown
+            ? formElementsConditionallyShown[element.name]
+            : undefined
         "
         :displayValidationMessage="displayValidationMessages"
         @updateSubmission="updateSubmission"

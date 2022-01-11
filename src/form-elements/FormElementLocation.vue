@@ -119,7 +119,7 @@ const FormElementLocationBase = Vue.extend({
     },
     setLocation(coords: Coords) {
       this.location = coords
-    },
+    }
   },
 })
 

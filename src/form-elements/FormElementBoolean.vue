@@ -16,7 +16,6 @@ export default Vue.extend({
     value: { required: true },
     displayValidationMessage: Boolean,
     validationMessage: { type: String, required: false },
-    isLookup: Boolean,
   },
   data() {
     return {

@@ -106,7 +106,7 @@ export default Vue.extend({
       <figure v-if="error" class="ob-figure">
         <div class="figure-content has-text-centered">
           <div>
-            <h4 className="title is-4">Whoops...</h4>
+            <h4 class="title is-4">Whoops...</h4>
             <p>{{ error.message }}</p>
           </div>
         </div>

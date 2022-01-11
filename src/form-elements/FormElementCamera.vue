@@ -57,7 +57,6 @@ export default mixins(AttachmentMixin).extend({
     },
     displayValidationMessage: Boolean,
     validationMessage: { type: String, required: false },
-    isLookup: Boolean,
   },
   data(): DataProps {
     return {

@@ -375,7 +375,7 @@ class HTML5Camera {
         <OnLoading v-if="isLoading" small />
 
         <div v-if="!!error">
-          <h4 className="title is-4">Whoops...</h4>
+          <h4 class="title is-4">Whoops...</h4>
           <p>{{ error.message }}</p>
         </div>
 

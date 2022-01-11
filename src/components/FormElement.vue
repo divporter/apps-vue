@@ -8,6 +8,8 @@ import {
 
 import { FormElementBinaryStorageValue } from "@/types/attachments"
 
+import { stringifyLocation } from "@/form-elements/FormElementLocation.vue"
+
 import LookupNotification from "@/components/LookupNotification.vue"
 import FormElementText from "@/form-elements/FormElementText.vue"
 import FormElementTextarea from "@/form-elements/FormElementTextarea.vue"
@@ -38,6 +40,8 @@ import FormElementCompliance from "@/form-elements/FormElementCompliance.vue"
 import FormElementBarcodeScanner from "@/form-elements/FormElementBarcodeScanner.vue"
 import FormElementGeoscapeAddress from "@/form-elements/FormElementGeoscapeAddress.vue"
 import FormElementPointAddress from "@/form-elements/FormElementPointAddress.vue"
+import FormElementCivicaNameRecord from "@/form-elements/FormElementCivicaNameRecord.vue"
+import FormElementCivicaStreetName from "@/form-elements/FormElementCivicaStreetName.vue"
 
 export default Vue.extend({
   components: {
@@ -70,7 +74,9 @@ export default Vue.extend({
     FormElementCompliance,
     FormElementBarcodeScanner,
     FormElementGeoscapeAddress,
-    FormElementPointAddress
+    FormElementPointAddress,
+    FormElementCivicaNameRecord,
+    FormElementCivicaStreetName,
   },
   props: {
     element: {
@@ -122,6 +128,7 @@ export default Vue.extend({
         value: value?.attachment,
       })
     },
+    stringifyLocation,
   },
   computed: {
     validationMessage(): string | undefined {
@@ -248,19 +255,16 @@ export default Vue.extend({
       :autoLookupValue="value"
       v-if="element.type === 'radio'"
     >
-      <template v-slot:default="{ isLookup }">
-        <FormElementRadio
-          :key="element.id"
-          :id="id"
-          :element="element"
-          :value="value"
-          :validationMessage="validationMessage"
-          :displayValidationMessage="displayValidationMessage"
-          :isLookup="isLookup"
-          :conditionallyShownOptions="conditionallyShownOptions"
-          @updateSubmission="updateSubmission"
-        />
-      </template>
+      <FormElementRadio
+        :key="element.id"
+        :id="id"
+        :element="element"
+        :value="value"
+        :validationMessage="validationMessage"
+        :displayValidationMessage="displayValidationMessage"
+        :conditionallyShownOptions="conditionallyShownOptions"
+        @updateSubmission="updateSubmission"
+      />
     </LookupNotification>
     <LookupNotification
       :element="element"
@@ -299,7 +303,6 @@ export default Vue.extend({
           :isLookup="isLookup"
           :conditionallyShownOptions="conditionallyShownOptions"
           @updateSubmission="updateSubmission"
-          @triggerLookup="triggerLookup"
         />
       </template>
     </LookupNotification>
@@ -309,19 +312,16 @@ export default Vue.extend({
       :model="model"
       v-if="element.type === 'autocomplete'"
     >
-      <template v-slot:default="{ isLookup }">
-        <FormElementAutocomplete
-          :key="element.id"
-          :id="id"
-          :element="element"
-          :value="value"
-          :validationMessage="validationMessage"
-          :displayValidationMessage="displayValidationMessage"
-          :isLookup="isLookup"
-          :conditionallyShownOptions="conditionallyShownOptions"
-          @updateSubmission="updateSubmission"
-        />
-      </template>
+      <FormElementAutocomplete
+        :key="element.id"
+        :id="id"
+        :element="element"
+        :value="value"
+        :validationMessage="validationMessage"
+        :displayValidationMessage="displayValidationMessage"
+        :conditionallyShownOptions="conditionallyShownOptions"
+        @updateSubmission="updateSubmission"
+      />
     </LookupNotification>
     <LookupNotification
       :autoLookupValue="value"
@@ -329,19 +329,16 @@ export default Vue.extend({
       :model="model"
       v-if="element.type === 'boolean'"
     >
-      <template v-slot:default="{ isLookup }">
-        <FormElementBoolean
-          :key="element.id"
-          :id="id"
-          :element="element"
-          :value="value"
-          :validationMessage="validationMessage"
-          :displayValidationMessage="displayValidationMessage"
-          :isLookup="isLookup"
-          :conditionallyShownOptions="conditionallyShownOptions"
-          @updateSubmission="updateSubmission"
-        />
-      </template>
+      <FormElementBoolean
+        :key="element.id"
+        :id="id"
+        :element="element"
+        :value="value"
+        :validationMessage="validationMessage"
+        :displayValidationMessage="displayValidationMessage"
+        :conditionallyShownOptions="conditionallyShownOptions"
+        @updateSubmission="updateSubmission"
+      />
     </LookupNotification>
     <LookupNotification
       :element="element"
@@ -448,15 +445,22 @@ export default Vue.extend({
       :displayValidationMessage="displayValidationMessage"
       @updateSubmission="updateAttachmentSubmission"
     />
-    <FormElementLocation
+    <LookupNotification
       v-if="element.type === 'location'"
-      :id="id"
+      :autoLookupValue="value"
+      :stringifyAutoLookupValue="stringifyLocation"
       :element="element"
-      :value="value"
-      :validationMessage="validationMessage"
-      :displayValidationMessage="displayValidationMessage"
-      @updateSubmission="updateSubmission"
-    />
+      :model="model"
+    >
+      <FormElementLocation
+        :id="id"
+        :element="element"
+        :value="value"
+        :validationMessage="validationMessage"
+        :displayValidationMessage="displayValidationMessage"
+        @updateSubmission="updateSubmission"
+      />
+    </LookupNotification>
     <FormElementFiles
       v-if="element.type === 'files'"
       :id="id"
@@ -481,13 +485,19 @@ export default Vue.extend({
       :element="element"
       @updateSubmission="updateSubmission"
     />
-    <FormElementCompliance
-      v-if="element.type === 'compliance'"
-      :id="id"
-      :value="value"
+    <LookupNotification
+      :autoLookupValue="value ? value.value : undefined"
       :element="element"
-      @updateSubmission="updateSubmission"
-    />
+      :model="model"
+    >
+      <FormElementCompliance
+        v-if="element.type === 'compliance'"
+        :id="id"
+        :value="value"
+        :element="element"
+        @updateSubmission="updateSubmission"
+      />
+    </LookupNotification>
     <LookupNotification
       :element="element"
       :model="model"
@@ -508,31 +518,55 @@ export default Vue.extend({
       </template>
     </LookupNotification>
     <LookupNotification
+      :autoLookupValue="value"
       :element="element"
       :model="model"
       v-if="element.type === 'geoscapeAddress'"
     >
-      <template v-slot:default="{ triggerLookup, isLookup }">
-        <FormElementGeoscapeAddress
-          :key="element.id"
-          :id="id"
-          :element="element"
-          :value="value"
-          :validationMessage="validationMessage"
-          :displayValidationMessage="displayValidationMessage"
-          :isLookup="isLookup"
-          @updateSubmission="updateSubmission"
-          @triggerLookup="triggerLookup"
-        />
-      </template>
+      <FormElementGeoscapeAddress
+        :key="element.id"
+        :id="id"
+        :element="element"
+        :value="value"
+        :validationMessage="validationMessage"
+        :displayValidationMessage="displayValidationMessage"
+        @updateSubmission="updateSubmission"
+      />
     </LookupNotification>
     <LookupNotification
+      :autoLookupValue="value"
       :element="element"
       :model="model"
       v-if="element.type === 'pointAddress'"
     >
+      <FormElementPointAddress
+        :key="element.id"
+        :id="id"
+        :element="element"
+        :value="value"
+        :validationMessage="validationMessage"
+        :displayValidationMessage="displayValidationMessage"
+        @updateSubmission="updateSubmission"
+      />
+    </LookupNotification>
+    <FormElementCivicaNameRecord
+      v-if="element.type === 'civicaNameRecord'"
+      :id="id"
+      :element="element"
+      :value="value"
+      :displayValidationMessages="displayValidationMessage"
+      :formElementValidation="formElementValidation"
+      :formElementConditionallyShown="formElementConditionallyShown"
+      @updateSubmission="updateSubmission"
+    />
+    <LookupNotification
+      :autoLookupValue="value"
+      :element="element"
+      :model="model"
+      v-if="element.type === 'civicaStreetName'"
+    >
       <template v-slot:default="{ triggerLookup, isLookup }">
-        <FormElementPointAddress
+        <FormElementCivicaStreetName
           :key="element.id"
           :id="id"
           :element="element"
