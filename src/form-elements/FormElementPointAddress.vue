@@ -117,7 +117,7 @@ export default class FormElementPointAddress extends FormElementPointAddressBase
         value: result,
       })
     } catch (newError) {
-      this.error = newError
+      this.error = newError as Error
     }
 
     this.isLoadingAddressDetails = false

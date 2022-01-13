@@ -1,6 +1,6 @@
 # oneblink-apps-vue [![npm module](https://img.shields.io/npm/v/oneblink-apps-vue.svg)](https://www.npmjs.com/package/oneblink-apps-vue)
 
-A faithful re-write of [@oneblink/apps-react](https://www.npmjs.com/package/@oneblink/apps-react) form components for Vue 2 applications
+A faithful re-write of [@oneblink/apps-react](https://www.npmjs.com/package/@oneblink/apps-react) v0.5.5 form components for Vue 2 applications
 
 ## Installation
 ```
@@ -71,7 +71,8 @@ import '@oneblink/apps-react/dist/styles.css'
 | ------------------- | ----------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `definition`              | `Form`                                          | Yes         | The OneBlink Form to render                                                                                                                                                                                               |
 | `initialSubmission` | `Object`                                        | No          | The initial submission data                                                                                                                                                                                               |
-| `googleMapsApiKey`  | `string`                                        | Conditional | A [Google Maps API Key](https://developers.google.com/maps/documentation/javascript/get-api-key). Required if the form contains a `location` form element.                                                                |
+| `googleMapsApiKey`  | `string`                                        | Conditional | A [Google Maps API Key](https://developers.google.com/maps/documentation/javascript/get-api-key). Required if the form contains a `location` form element.   
+| `abnLookupAuthenticationGuid` | `string`                                        | Conditional | An [ABN Lookup Authentication Guid](https://abr.business.gov.au/Tools/WebServices). Required if the form contains a `abn` form element.                                                                                   |                                                             |
 | `captchaSiteKey`    | `string`                                        | Conditional | A [reCAPTCHA Site Key](https://developers.google.com/recaptcha/intro). Required if the form contains a `captcha` form element.                                                                                            |
 | `disabled`          | `boolean`                                       | No          | Whether the form is currently able to be submitted. False by default.                                                                                                                                                     |
 | `buttons`           | [`ButtonsConfiguration`](#buttonsconfiguration) | No          | Change properties for certain buttons on the form.                                                                                                                                                                        |

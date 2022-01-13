@@ -5,7 +5,10 @@ import { FormTypes } from "@oneblink/types"
 import Files from "@/components/attachments/Files.vue"
 import FormElementFile from "./FormElementFile.vue"
 
-import { checkFileNameIsValid } from "@/services/form-validation"
+import {
+  checkFileNameIsValid,
+  checkFileNameExtensionIsValid,
+} from "@/services/form-validation"
 import {
   prepareNewAttachment,
   correctFileOrientation,
@@ -46,7 +49,8 @@ export default Vue.extend({
       return (
         (!!this.element.maxEntries &&
           this.attachments.length > this.element.maxEntries) ||
-        !checkFileNameIsValid(this.element, attachment.fileName)
+        !checkFileNameIsValid(this.element, attachment.fileName) ||
+        !checkFileNameExtensionIsValid(this.element, attachment.fileName)
       )
     },
     async addAttachments(files: File[]) {
@@ -98,16 +102,15 @@ export default Vue.extend({
       if (!this.value) {
         return
       }
-      this.$emit(
-        "updateSubmission",
-        this.value.filter((att) => {
-          if (!att.type) {
-            return att.id !== id
-          }
-          return att._id !== id
-        })
-      )
-
+      const newAttachments = this.value.filter((att) => {
+        if (!att.type) {
+          return att.id !== id
+        }
+        return att._id !== id
+      })
+      if (newAttachments?.length) {
+        this.$emit("updateSubmission", newAttachments)
+      }
       this.setIsDirty()
     },
     updateSubmission({

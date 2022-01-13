@@ -8,5 +8,11 @@ module.exports = {
         "balm-ui-css": "balm-ui/dist/balm-ui.css",
       },
     },
+    externals: {
+      vue: "vue",
+      "@oneblink/apps": "@oneblink/apps",
+      "aws-sdk": "aws-sdk",
+      "@sentry": "@sentry",
+    },
   },
 }

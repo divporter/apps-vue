@@ -30,6 +30,7 @@ const OneBlinkReadOnlyFormBase = Vue.extend({
       required: false,
     },
     primaryColor: String,
+    abnLookupAuthenticationGuid: String,
   },
   data(): DataProps {
     return {

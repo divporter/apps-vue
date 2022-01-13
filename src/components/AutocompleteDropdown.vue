@@ -183,6 +183,7 @@ const AutocompleteDropdownBase = Vue.extend({
       this.abortController = new AbortController()
 
       this.ignore = false
+      //@ts-expect-error number is ok
       this.timeoutId = setTimeout(async () => {
         let newOptions: AutocompleteOption[] = []
         let newError = null

@@ -31,6 +31,8 @@ import {
 import cleanFormSubmissionModel from "./services/cleanFormSubmissionModel"
 import checkIfAttachmentsAreUploading from "./services/checkIfAttachmentsAreUploading"
 import generateDefaultData from "./services/generate-default-data"
+import checkBsbsAreInvalid from "./services/checkBsbsAreInvalid"
+import checkIfBsbsAreValidating from "./services/checkIfBsbsAreValidating"
 
 import {
   FormElementsValidation,
@@ -49,7 +51,8 @@ type DataProps = {
   hasConfirmedNavigation: boolean | null
   isNavigationAllowed: boolean
   goToLocation: ((value: unknown) => void) | null
-  loadDynamicOptionsState: formService.LoadFormElementDynamicOptionsResult | null
+  loadDynamicOptionsState: formService.LoadFormElementOptionsResult | null
+  abortController: AbortController
 }
 
 const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
@@ -75,6 +78,7 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
     isPreview: Boolean,
     disabled: Boolean,
     buttons: Object as PropType<FormsAppsTypes.FormsListStyles["buttons"]>,
+    abnLookupAuthenticationGuid: String,
   },
   data(): DataProps {
     return {
@@ -88,6 +92,7 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
       isNavigationAllowed: false,
       goToLocation: null,
       loadDynamicOptionsState: null,
+      abortController: new AbortController(),
     }
   },
   mounted() {
@@ -100,12 +105,14 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
     if (this.loadDynamicOptionsState) {
       return
     }
+
+    this.abortController = new AbortController()
     ;(async () => {
       const optionsByElementId = await formService.getFormElementDynamicOptions(
         this.definition
       )
 
-      if (!optionsByElementId.length) {
+      if (this.abortController.signal.aborted || !optionsByElementId.length) {
         return
       }
 
@@ -253,6 +260,9 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
         // they will need to prove they are not robot again
         const { submission } = this.getCurrentSubmissionData(false)
 
+        if (!this.checkBsbAreValidating(submission)) {
+          return
+        }
         if (!this.checkAttachmentsCanBeSubmitted(submission)) {
           return
         }
@@ -275,9 +285,33 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
         this.$emit("cancel")
       }
     },
+    checkBsbsCanBeSubmitted(submission: FormSubmissionModel) {
+      return !checkBsbsAreInvalid(this.definition, submission)
+    },
+    checkBsbAreValidating(submission: FormSubmissionModel) {
+      if (checkIfBsbsAreValidating(this.definition, submission)) {
+        bulmaToast.toast({
+          message:
+            "Bsb(s) are still being validated, please wait for them to finish before trying again.",
+          // @ts-expect-error bulma sets this string as a class, so we are hacking in our own classes
+          type: "ob-toast is-primary cypress-still-validating-toast",
+          duration: 4000,
+          pauseOnHover: true,
+          closeOnClick: true,
+        })
+        return false
+      }
+
+      return true
+    },
     handleSubmit() {
       if (this.disabled || this.isReadOnly) return
       this.hasAttemptedSubmit = true
+
+      const submissionData = this.getCurrentSubmissionData(false)
+      if (!this.checkBsbAreValidating(submissionData.submission)) {
+        return
+      }
 
       if (this.formElementsValidation) {
         console.log("Validation errors", this.formElementsValidation)
@@ -292,9 +326,11 @@ const OneBlinkFormBaseBase = mixins(IsOfflineMixin).extend({
         return
       }
 
-      const submissionData = this.getCurrentSubmissionData(false)
-
       if (!this.checkAttachmentsCanBeSubmitted(submissionData.submission)) {
+        return
+      }
+
+      if (!this.checkBsbsCanBeSubmitted(submissionData.submission)) {
         return
       }
 
@@ -496,12 +532,19 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
     elementLookupData: FormTypes.PageElement[],
     dataLookupResult?: FormSubmissionModel
   ) => void = this.handlePagesLookupResult
+  @ProvideReactive() abnLookupAuthenticationGuid: string =
+    //@ts-expect-error don't worry about it typescript
+    this.abnLookupAuthenticationGuid
 
   //@ts-expect-error any are you ok?
   beforeRouteLeave(to, from, next) {
     if (this.isDirty && !this.isNavigationAllowed) {
       this.showDialog().then(next)
     }
+  }
+
+  onDestroy() {
+    this.abortController.abort()
   }
 
   @Watch("hasConfirmedNavigation")

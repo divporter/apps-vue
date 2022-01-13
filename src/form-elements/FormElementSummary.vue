@@ -6,6 +6,7 @@ import { localisationService } from "@oneblink/apps"
 import flattenFormElements from "@/services/flattenFormElements"
 import { FormTypes } from "@oneblink/types"
 import { FormSubmissionModel } from "@/types/form"
+import { generateDate } from "../services/generate-default-data"
 
 import SummaryResult from "@/components/SummaryResult.vue"
 
@@ -127,6 +128,9 @@ const FormElementSummaryBase = Vue.extend({
           if (Array.isArray(formElement.options)) {
             partialSummary.push(
               ...optionValues.reduce((optionLabels, optionValue) => {
+                if (!formElement.options) {
+                  return optionLabels
+                }
                 const option = formElement.options.find(
                   ({ value }: FormTypes.ChoiceElementOption) =>
                     optionValue === value
@@ -141,10 +145,14 @@ const FormElementSummaryBase = Vue.extend({
           break
         }
         case "date": {
-          if (typeof formElementValue !== "string") return partialSummary
-          partialSummary.push(
-            localisationService.formatDate(new Date(formElementValue))
-          )
+          const date = generateDate({
+            daysOffset: undefined,
+            value: formElementValue as string,
+            dateOnly: true,
+          })
+          if (date) {
+            partialSummary.push(localisationService.formatDate(date))
+          }
           break
         }
         case "datetime": {

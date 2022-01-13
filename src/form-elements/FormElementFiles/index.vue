@@ -24,6 +24,13 @@ import { Attachment } from "../../types/attachments"
 
 import { checkIsUsingLegacyStorage } from "../../services/attachments"
 
+export function stringifyAttachments(value: Attachment[] | undefined): string {
+  if (Array.isArray(value) && value?.every((attachment) => !attachment.type)) {
+    return JSON.stringify(value)
+  }
+  return ""
+}
+
 export default Vue.extend({
   components: {
     Fragment,

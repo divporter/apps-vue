@@ -29,6 +29,7 @@ const OneBlinkFormControlledBase = Vue.extend({
       required: true,
     },
     primaryColor: String,
+    abnLookupAuthenticationGuid: String,
   },
   data(): DataProps {
     return {

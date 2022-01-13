@@ -107,7 +107,7 @@ export default class FormElementGeoscapeAddress extends FormElementGeoscapeAddre
         value: result,
       })
     } catch (newError) {
-      this.error = newError
+      this.error = newError as Error
     }
 
     this.isLoadingAddressDetails = false

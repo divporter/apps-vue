@@ -86,7 +86,7 @@ function parseFiles(
   }
 }
 
-const generateDate = ({
+export const generateDate = ({
   daysOffset,
   value,
   dateOnly,
@@ -155,7 +155,9 @@ export function parseDateValue({
           day: "",
         }
       )
-    return `${year}-${month}-${day}`
+    // This is a workaround for an iOS 15 bug where the year was being returned as 2 digits: https://bugs.webkit.org/show_bug.cgi?id=230827
+    const fixedYear = year.length === 2 ? date.getFullYear() : year
+    return `${fixedYear}-${month}-${day}`
   } else {
     return date.toISOString()
   }
@@ -200,7 +202,7 @@ function parseFormSubmissionModel(
       switch (element.type) {
         case "section":
         case "page": {
-          const partialModel = parseFormSubmissionModel(element.elements, model)
+          const partialModel = parseFormSubmissionModel(element.elements, {})
           Object.assign(model, partialModel)
           break
         }
@@ -267,6 +269,13 @@ function parsePreFillData(
         value,
       })
     }
+    case 'bsb': {
+      const text = parseStringValue(value)
+      if (text?.match(/\d{3}-\d{3}/)) {
+        return text
+      }
+      return
+    }
     case "text":
     case "barcodeScanner":
     case "email":
@@ -292,6 +301,26 @@ function parsePreFillData(
     }
     case "boolean": {
       return typeof value === "boolean" ? value : false
+    }
+    case 'abn': {
+      return parseUnknownAsRecord(value, (record) => {
+        const hasABN = parseUnknownAsRecord(record.ABN, (ABN) => {
+          if (parseStringValue(ABN.identifierValue)) {
+            return true
+          }
+        })
+        const hasMainName = parseUnknownAsRecord(
+          record.mainName,
+          (mainName) => {
+            if (parseStringValue(mainName.organisationName)) {
+              return true
+            }
+          },
+        )
+        if (hasABN && hasMainName) {
+          return record
+        }
+      })
     }
     case "pointAddress":
     case "geoscapeAddress": {
@@ -454,12 +483,13 @@ export default function generateDefaultData(
       case "pointAddress":
       case "civicaStreetName":
       case "camera":
+      case 'abn':
+      case 'bsb':
       case "text":
       case "barcodeScanner":
       case "email":
       case "telephone":
       case "textarea":
-      case "file":
       case "files":
       case "draw":
       case "location": {
@@ -494,7 +524,7 @@ const getOptionsDefaultValue = (el: FormTypes.FormElementWithOptions) => {
     return
   }
   // Cater for dynamic options
-  if (el.optionsType === "DYNAMIC") {
+  if (el.optionsType === 'DYNAMIC' || el.optionsType === 'FRESHDESK_FIELD') {
     return el.defaultValue
   }
   // Cater for multi-select and checkboxes

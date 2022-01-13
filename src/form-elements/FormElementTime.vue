@@ -1,7 +1,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
 import { Component, Watch } from "vue-property-decorator"
-import { localisationService } from "@oneblink/apps"
+import { localisationService, Sentry } from "@oneblink/apps"
 import { FormTypes } from "@oneblink/types"
 import Flatpickr from "flatpickr"
 import { Options as FlatpickrOptions } from "flatpickr/dist/types/options"
@@ -108,13 +108,23 @@ export default class FormElementTime extends FormElementTimeBase {
     if (this.vp && this.vp.selectedDates) {
       const selectedDate = this.vp.selectedDates[0]
       if (!this.value && selectedDate) {
-        this.vp.clear(false)
+        try {
+          this.vp.clear(false)
+        } catch (error) {
+          Sentry.captureException(new Error("Error clearing value"))
+        }
       } else if (
         this.value &&
         typeof this.value === "string" &&
         (!selectedDate || this.getDateValue(selectedDate) !== this.value)
       ) {
-        this.vp.setDate(this.value, false)
+        try {
+          this.vp.setDate(this.value, false)
+        } catch (error) {
+          Sentry.captureException(
+            new Error(`Error setting date: ${this.value}`)
+          )
+        }
       }
     }
   }
@@ -161,6 +171,7 @@ export default class FormElementTime extends FormElementTimeBase {
           isInputButton
           :value="value"
           :validationMessage="validationMessage"
+          @click="triggerLookup"
         />
       </div>
       <div

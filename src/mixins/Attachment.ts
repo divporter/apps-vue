@@ -245,7 +245,7 @@ export default Vue.extend({
             return
           }
           console.warn("Error loading file:", error)
-          this.loadImageUrlError = error
+          this.loadImageUrlError = error as Error
         }
       }
       effect()

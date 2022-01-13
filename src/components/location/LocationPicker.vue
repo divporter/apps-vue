@@ -63,6 +63,9 @@ export default Vue.extend({
       })
 
       this.marker.addListener("dragend", (event: google.maps.MapMouseEvent) => {
+        if (!event.latLng) {
+          return
+        }
         if (event.latLng) {
           const { lat, lng } = event.latLng.toJSON()
           this.onChange({

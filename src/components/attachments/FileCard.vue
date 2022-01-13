@@ -5,7 +5,10 @@ import ClickOutsideElement from "@/components/ClickOutsideElement.vue"
 import { FormTypes } from "@oneblink/types"
 import FileCardContent from "./FileCardContent.vue"
 import AttachmentStatus from "@/components/attachments/AttachmentStatus.vue"
-import { checkFileNameIsValid } from "../../services/form-validation"
+import {
+  checkFileNameIsValid,
+  checkFileNameExtensionIsValid,
+} from "../../services/form-validation"
 
 type DataProps = {
   isShowingMore: boolean
@@ -43,6 +46,9 @@ export default Vue.extend({
         return new Error(
           `${this.fileName.split(".").pop()} files are not allowed`
         )
+      }
+      if (!checkFileNameExtensionIsValid(this.element, this.fileName)) {
+        return new Error(`${this.fileName} must have an extension`)
       }
       if (this.uploadErrorMessage) {
         return new Error(this.uploadErrorMessage)

@@ -30,6 +30,7 @@ const OneBlinkFormUncontrolledBase = Vue.extend({
       required: false,
     },
     primaryColor: String,
+    abnLookupAuthenticationGuid: String,
   },
   data(): DataProps {
     return {
@@ -90,5 +91,6 @@ export default class OneBlinkFormUncontrolled extends OneBlinkFormUncontrolledBa
     @submit="handleSubmit"
     :showSaveDraft="showSaveDraft"
     :primaryColor="primaryColor"
+    abnLookupAuthenticationGuid="78183bfc-257e-4d9b-8f37-ca8eb7cd4a32"
   />
 </template>

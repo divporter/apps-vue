@@ -47,6 +47,7 @@ const OneBlinkFormUncontrolledBase = Vue.extend({
       required: true,
       default: "",
     },
+    abnLookupAuthenticationGuid: String,
   },
   data(): DataProps {
     return {

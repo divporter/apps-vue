@@ -167,6 +167,18 @@ validate.validators.isTrue = function (value: unknown, message?: string) {
   }
 }
 
+validate.validators.needsExtension = function (
+  value: PossibleFileConfiguration[] | undefined,
+  formElement: FormTypes.FilesElement,
+) {
+  const isValid =
+    !Array.isArray(value) ||
+    value.every((file) => {
+      return checkFileNameExtensionIsValid(formElement, file.fileName)
+    })
+  if (!isValid) return 'All files must have extensions'
+}
+
 function getCustomRegexFormatConfig<DefaultValue>(
   formElement: FormTypes.FormElementWithInput<DefaultValue>
 ) {
@@ -342,6 +354,7 @@ export function generateValidationSchema(
         }
         break
       }
+      case "abn":
       case "geoscapeAddress":
       case "pointAddress":
       case "civicaStreetName":
@@ -364,6 +377,20 @@ export function generateValidationSchema(
           lookups: {
             formElement,
             elementIdsWithLookupsExecuted,
+          },
+        }
+        break
+      }
+      case 'bsb': {
+        partialSchema[escapeElementName(formElement.name)] = {
+          presence: presence(formElement.required, 'Please enter a BSB number'),
+          lookups: {
+            formElement,
+            elementIdsWithLookupsExecuted,
+          },
+          format: {
+            pattern: /\d{3}-\d{3}/,
+            message: 'Please enter a valid BSB number',
           },
         }
         break
@@ -554,6 +581,7 @@ export function generateValidationSchema(
               formElement.restrictedFileTypes || []
             ).join(", ")}`,
           },
+          needsExtension: formElement,
           attachments: !checkIsUsingLegacyStorage(formElement),
         }
         break
@@ -648,7 +676,18 @@ export function checkFileNameIsValid(
   const extension = fileName.split(".").pop()
   return (
     !formElement.restrictedFileTypes ||
-    formElement.restrictedFileTypes.some((fileType) => fileType === extension)
+    formElement.restrictedFileTypes.some(
+      (fileType) => fileType.toLowerCase() === extension?.toLowerCase(),
+    )
+  )
+}
+
+export function checkFileNameExtensionIsValid(
+  formElement: FormTypes.FilesElement,
+  fileName: string,
+) {
+  return (
+    formElement.allowExtensionlessAttachments || fileName.split('.').length >= 2
   )
 }
 

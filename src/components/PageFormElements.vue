@@ -1,6 +1,6 @@
 <script lang="ts">
 import Vue, { PropType } from "vue"
-import { Component, Provide } from "vue-property-decorator"
+import { Component, Provide, ProvideReactive } from "vue-property-decorator"
 import { FormTypes } from "@oneblink/types"
 import {
   FormElementConditionallyShown,
@@ -90,6 +90,9 @@ type LookupCallback = ({
 export default class PageFormElements extends PageFormElementsBase {
   @Provide() handleLookup: (callback: LookupCallback) => void =
     this.handleLookup
+
+  //@ts-expect-error is ok typescript
+  @ProvideReactive() isActive: boolean = this.isActive
 }
 </script>
 

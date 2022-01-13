@@ -33,7 +33,9 @@ import FormElementCamera from "@/form-elements/FormElementCamera.vue"
 import FormElementRepeatableSet from "@/form-elements/FormElementRepeatableSet.vue"
 import FormElementSignature from "@/form-elements/FormElementSignature.vue"
 import FormElementLocation from "@/form-elements/FormElementLocation.vue"
-import FormElementFiles from "@/form-elements/FormElementFiles/index.vue"
+import FormElementFiles, {
+  stringifyAttachments,
+} from "@/form-elements/FormElementFiles/index.vue"
 import FormElementCaptcha from "@/form-elements/FormElementCaptcha.vue"
 import FormElementSummary from "@/form-elements/FormElementSummary.vue"
 import FormElementCompliance from "@/form-elements/FormElementCompliance.vue"
@@ -42,6 +44,8 @@ import FormElementGeoscapeAddress from "@/form-elements/FormElementGeoscapeAddre
 import FormElementPointAddress from "@/form-elements/FormElementPointAddress.vue"
 import FormElementCivicaNameRecord from "@/form-elements/FormElementCivicaNameRecord.vue"
 import FormElementCivicaStreetName from "@/form-elements/FormElementCivicaStreetName.vue"
+import FormElementBSB from "@/form-elements/FormElementBSB.vue"
+import FormElementABN from "@/form-elements/FormElementABN.vue"
 
 export default Vue.extend({
   components: {
@@ -77,6 +81,8 @@ export default Vue.extend({
     FormElementPointAddress,
     FormElementCivicaNameRecord,
     FormElementCivicaStreetName,
+    FormElementBSB,
+    FormElementABN,
   },
   props: {
     element: {
@@ -129,6 +135,7 @@ export default Vue.extend({
       })
     },
     stringifyLocation,
+    stringifyAttachments,
   },
   computed: {
     validationMessage(): string | undefined {
@@ -461,17 +468,24 @@ export default Vue.extend({
         @updateSubmission="updateSubmission"
       />
     </LookupNotification>
-    <FormElementFiles
-      v-if="element.type === 'files'"
-      :id="id"
+    <LookupNotification
+      :autoLookupValue="value"
+      :stringifyAutoLookupValue="stringifyAttachments"
       :element="element"
-      :value="value"
-      :validationMessage="validationMessage"
-      :displayValidationMessage="displayValidationMessage"
-      @updateSubmission="updateSubmission"
-    />
+      :model="model"
+    >
+      <FormElementFiles
+        v-if="element.type === 'files'"
+        :id="id"
+        :element="element"
+        :value="value"
+        :validationMessage="validationMessage"
+        :displayValidationMessage="displayValidationMessage"
+        @updateSubmission="updateSubmission"
+      />
+    </LookupNotification>
     <FormElementCaptcha
-      v-if="element.type === 'captcha'"
+      v-if="element.type === 'captcha' && false"
       :id="id"
       :element="element"
       @updateSubmission="updateSubmission"
@@ -565,7 +579,7 @@ export default Vue.extend({
       :model="model"
       v-if="element.type === 'civicaStreetName'"
     >
-      <template v-slot:default="{ triggerLookup, isLookup }">
+      <template>
         <FormElementCivicaStreetName
           :key="element.id"
           :id="id"
@@ -573,8 +587,42 @@ export default Vue.extend({
           :value="value"
           :validationMessage="validationMessage"
           :displayValidationMessage="displayValidationMessage"
-          :isLookup="isLookup"
           @updateSubmission="updateSubmission"
+        />
+      </template>
+    </LookupNotification>
+    <LookupNotification
+      v-if="element.type === 'bsb'"
+      :element="element"
+      :model="model"
+    >
+      <template v-slot:default="{ triggerLookup, isLookup }">
+        <FormElementBSB
+          :id="id"
+          :element="element"
+          :value="value"
+          @updateSubmission="updateSubmission"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
+          @triggerLookup="triggerLookup"
+        />
+      </template>
+    </LookupNotification>
+    <LookupNotification
+      v-if="element.type === 'abn'"
+      :element="element"
+      :model="model"
+    >
+      <template v-slot:default="{ triggerLookup, isLookup }">
+        <FormElementABN
+          :id="id"
+          :element="element"
+          :value="value"
+          @updateSubmission="updateSubmission"
+          :validationMessage="validationMessage"
+          :displayValidationMessage="displayValidationMessage"
+          :isLookup="isLookup"
           @triggerLookup="triggerLookup"
         />
       </template>

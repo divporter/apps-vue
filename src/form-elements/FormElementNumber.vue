@@ -11,6 +11,7 @@ type DataProps = {
 }
 
 export default Vue.extend({
+  inject: { isPageVisible: { from: "isActive" } },
   components: {
     FormElementLabelContainer,
     LookupButton,
@@ -114,6 +115,7 @@ export default Vue.extend({
         </div>
       </div>
       <SliderControl
+        v-if="isPageVisible"
         :id="id"
         :text="text"
         :value="value"
