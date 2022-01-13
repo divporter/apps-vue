@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.5]
+## [0.3]
 
 ### Addded
 
@@ -17,3 +17,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Aligned code to @oneblink/react-apps v0.5.5
+- removed @oneblink/apps libraries from build
