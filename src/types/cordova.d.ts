@@ -3,7 +3,7 @@ declare interface Navigator {
     getPicture: (
       onSuccess: (base64Data: string) => void,
       onError: (error: Error) => void,
-      options: Record<string, unknown>,
+      options: Record<string, unknown>
     ) => Promise<void>
   }
 }

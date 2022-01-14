@@ -1,5 +1,5 @@
 type AttachmentSaved =
-  import('@oneblink/types').SubmissionTypes.FormSubmissionAttachment & {
+  import("@oneblink/types").SubmissionTypes.FormSubmissionAttachment & {
     type?: undefined
   }
 
@@ -11,10 +11,10 @@ interface AttachmentBase {
 }
 
 export type AttachmentNew = AttachmentBase & {
-  type: 'NEW'
+  type: "NEW"
 }
 export type AttachmentError = AttachmentBase & {
-  type: 'ERROR'
+  type: "ERROR"
   errorMessage: string
 }
 

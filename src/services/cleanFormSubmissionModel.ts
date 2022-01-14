@@ -4,7 +4,7 @@ import {
   FormElementsConditionallyShown,
   FormSubmissionModel,
 } from "../types/form"
-import { checkIsUsingLegacyStorage } from './attachments'
+import { checkIsUsingLegacyStorage } from "./attachments"
 
 function cleanElementValue(
   submission: FormSubmissionModel,
@@ -38,7 +38,7 @@ function cleanElementValue(
         }
         break
       }
-      case 'files': {
+      case "files": {
         const value = submission[element.name] as
           | Array<Record<string, unknown>>
           | undefined

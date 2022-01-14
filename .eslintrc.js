@@ -24,7 +24,7 @@ module.exports = {
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
   },
-  globals:{
-    "google": "readonly"
-  }
+  globals: {
+    google: "readonly",
+  },
 }

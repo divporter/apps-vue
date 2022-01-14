@@ -1,1 +1,1 @@
-declare module '@blinkmobile/geolocation'
+declare module "@blinkmobile/geolocation"

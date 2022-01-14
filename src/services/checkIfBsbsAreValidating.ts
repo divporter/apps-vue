@@ -1,48 +1,48 @@
-import { FormTypes } from '@oneblink/types'
-import { FormSubmissionModel } from '../types/form'
+import { FormTypes } from "@oneblink/types"
+import { FormSubmissionModel } from "../types/form"
 
 function checkIfBsbsAreValidatingForFormElements(
   formElements: FormTypes.FormElement[],
-  submission: FormSubmissionModel,
+  submission: FormSubmissionModel
 ): boolean {
   return formElements.some((formElement) => {
     switch (formElement.type) {
-      case 'section':
-      case 'page': {
+      case "section":
+      case "page": {
         return checkIfBsbsAreValidatingForFormElements(
           formElement.elements,
-          submission,
+          submission
         )
       }
-      case 'form': {
+      case "form": {
         const nestedSubmission = submission[formElement.name]
-        if (!nestedSubmission || typeof nestedSubmission !== 'object') {
+        if (!nestedSubmission || typeof nestedSubmission !== "object") {
           break
         }
         return checkIfBsbsAreValidatingForFormElements(
           formElement.elements || [],
-          nestedSubmission as FormSubmissionModel,
+          nestedSubmission as FormSubmissionModel
         )
       }
-      case 'repeatableSet': {
+      case "repeatableSet": {
         const entries = submission[formElement.name]
         if (!Array.isArray(entries)) {
           break
         }
         return entries.some((entry) => {
           return (
-            typeof entry === 'object' &&
+            typeof entry === "object" &&
             checkIfBsbsAreValidatingForFormElements(formElement.elements, entry)
           )
         })
       }
-      case 'bsb': {
+      case "bsb": {
         const value = submission[formElement.name]
         if (!value) {
           break
         }
         const bsbValue = value as string | { isValidating: boolean }
-        if (typeof bsbValue === 'object') {
+        if (typeof bsbValue === "object") {
           return bsbValue.isValidating
         }
       }
@@ -52,7 +52,7 @@ function checkIfBsbsAreValidatingForFormElements(
 
 export default function checkIfBsbsAreValidating(
   form: FormTypes.Form,
-  submission: FormSubmissionModel,
+  submission: FormSubmissionModel
 ): boolean {
   return checkIfBsbsAreValidatingForFormElements(form.elements, submission)
 }

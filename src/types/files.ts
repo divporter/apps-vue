@@ -6,5 +6,3 @@ export type FilesElementFile = {
 }
 
 export type PossibleFileConfiguration = Attachment | FilesElementFile
-
-

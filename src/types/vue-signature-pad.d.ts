@@ -1,1 +1,1 @@
-declare module 'vue-signature-pad'
+declare module "vue-signature-pad"

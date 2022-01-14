@@ -61,7 +61,8 @@
     "xml2js": "^0.4.23"
   },
   "peerDependencies": {
-    "vue": "^2.6.14"
+    "vue": "^2.6.14",
+    "@oneblink/apps": "^0.12.5-beta.1"
   },
   "devDependencies": {
     "@oneblink/apps": "^0.12.5-beta.1",

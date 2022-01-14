@@ -269,7 +269,7 @@ function parsePreFillData(
         value,
       })
     }
-    case 'bsb': {
+    case "bsb": {
       const text = parseStringValue(value)
       if (text?.match(/\d{3}-\d{3}/)) {
         return text
@@ -302,7 +302,7 @@ function parsePreFillData(
     case "boolean": {
       return typeof value === "boolean" ? value : false
     }
-    case 'abn': {
+    case "abn": {
       return parseUnknownAsRecord(value, (record) => {
         const hasABN = parseUnknownAsRecord(record.ABN, (ABN) => {
           if (parseStringValue(ABN.identifierValue)) {
@@ -315,7 +315,7 @@ function parsePreFillData(
             if (parseStringValue(mainName.organisationName)) {
               return true
             }
-          },
+          }
         )
         if (hasABN && hasMainName) {
           return record
@@ -483,8 +483,8 @@ export default function generateDefaultData(
       case "pointAddress":
       case "civicaStreetName":
       case "camera":
-      case 'abn':
-      case 'bsb':
+      case "abn":
+      case "bsb":
       case "text":
       case "barcodeScanner":
       case "email":
@@ -524,7 +524,7 @@ const getOptionsDefaultValue = (el: FormTypes.FormElementWithOptions) => {
     return
   }
   // Cater for dynamic options
-  if (el.optionsType === 'DYNAMIC' || el.optionsType === 'FRESHDESK_FIELD') {
+  if (el.optionsType === "DYNAMIC" || el.optionsType === "FRESHDESK_FIELD") {
     return el.defaultValue
   }
   // Cater for multi-select and checkboxes
