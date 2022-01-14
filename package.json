@@ -5,7 +5,7 @@
     "dist/*",
     "src/*"
   ],
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": false,
   "description": "@oneblink/apps-react faithfully translated to Vue",
   "author": "David Porter <divporter@gmail.com>",
