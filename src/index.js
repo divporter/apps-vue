@@ -12,6 +12,7 @@ import $theme from "balm-ui/plugins/theme"
 import OneBlinkForm from "./OneBlinkFormUncontrolled.vue"
 import OneBlinkAutoSaveForm from "./OneBlinkAutoSaveForm.vue"
 import OneBlinkFormControlled from "./OneBlinkFormControlled.vue"
+import OneBlinkReadOnlyForm from "./OneBlinkReadOnlyForm"
 
 import "tippy.js/themes/google.css"
 
@@ -39,6 +40,7 @@ const OneBlinkFormComponents = {
     Vue.component("OneBlinkForm", OneBlinkForm)
     Vue.component("OneBlinkAutoSaveForm", OneBlinkAutoSaveForm)
     Vue.component("OneBlinkFormControlled", OneBlinkFormControlled)
+    Vue.component("OneBlinkReadOnlyForm", OneBlinkReadOnlyForm)
   },
 }
 

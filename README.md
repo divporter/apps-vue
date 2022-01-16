@@ -470,6 +470,70 @@ export default Vue.extend({
 </template>
 ```
 
+### <OneBlinkReadOnly Form />
+
+Component for rendering a OneBlink Form in read-only mode. This component will render the form with all inputs disabled but will **not** render the submit, cancel and save draft buttons.
+
+#### Props
+
+| Property            | Type           | Required    | Description                                                                                                                                                |
+| ------------------- | -------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `form`              | `OneBlinkForm` | Yes         | The OneBlink Form to render                                                                                                                                |
+| `initialSubmission` | `Object`       | No          | The initial submission data. Without this the form will be blank                                                                                           |
+| `googleMapsApiKey`  | `string`       | Conditional | A [Google Maps API Key](https://developers.google.com/maps/documentation/javascript/get-api-key). Required if the form contains a `location` form element. |
+
+#### Example
+
+```html
+<script>
+//Form.vue
+import Vue from "vue"
+import { FormTypes } from '@oneblink/types'
+import {
+  OneBlinkAppsError,
+  draftService,
+  submissionService,
+} from '@oneblink/apps'
+
+export default Vue.extend({
+  data(){
+    return {
+      captchaSiteKey:'ENTER_YOUR_SITE_KEY_HERE',
+      googleMapsApiKey: 'ENTER_YOUR_MAPS_API_KEY_HERE',
+      formsAppId: 1,
+      definition: {
+        id: 1,
+        name: 'Name of Form',
+        description: '',
+        organisationId: 'abc123',
+        formsAppEnvironmentId: 1,
+        formsAppIds: [],
+        elements: [],
+        isAuthenticated: false,
+        isMultiPage: false,
+        isInfoPage: false,
+        publishStartDate: null,
+        publishEndDate: null,
+        postSubmissionAction: 'FORMS_LIBRARY',
+        submissionEvents: [],
+        tags: [],
+      },
+    }
+  }
+})
+
+</script>
+
+<template>
+  <div>
+    <OneBlinkReadOnlyForm
+      :googleMapsApiKey="googleMapsApiKey"
+      :definition="definition"
+    />
+  </div>
+</template>
+```
+
 ## Known Issues
 
 - [Recaptcha element causing browser to crash](https://github.com/google/recaptcha/issues/269)

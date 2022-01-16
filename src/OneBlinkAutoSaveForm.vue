@@ -169,7 +169,7 @@ export default class OneBlinkFormUncontrolled extends OneBlinkFormUncontrolledBa
     this.autoSaveSubmission = null
   }
 
-  onDestroy() {
+  beforeDestroy() {
     this.cancelAutoSave()
   }
 }

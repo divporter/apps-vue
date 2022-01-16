@@ -543,7 +543,7 @@ export default class OneBlinkFormBase extends OneBlinkFormBaseBase {
     }
   }
 
-  onDestroy() {
+  beforeDestroy() {
     this.abortController.abort()
   }
 

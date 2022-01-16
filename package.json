@@ -23,31 +23,13 @@
     "build-library-watch": "vue-cli-service build --target lib --name oneblink-apps-vue --watch --mode production ./src/index.js"
   },
   "dependencies": {
-    "@blinkmobile/geolocation": "^2.0.3",
     "@googlemaps/js-api-loader": "^1.12.11",
     "@oneblink/apps-react": "^0.5.5",
-    "@oneblink/sdk-core": "^0.3.2",
-    "@types/blueimp-load-image": "^5.14.4",
     "@types/uuid": "^8.3.1",
-    "abort-controller": "^3.0.0",
     "balm-ui": "^8.47.1",
-    "blueimp-load-image": "^5.16.0",
-    "bulma-toast": "^2.4.1",
-    "color": "^4.0.2",
+    "color": "^3.2.1",
     "core-js": "^3.6.5",
-    "escape-string-regexp": "^5.0.0",
-    "file-saver": "^2.0.5",
-    "flatpickr": "^4.6.9",
-    "jsqr": "^1.4.0",
-    "lodash.clonedeep": "^4.5.0",
-    "lodash.debounce": "^4.0.8",
-    "lodash.throttle": "^4.1.1",
-    "morph-expressions": "^1.1.1",
-    "quagga": "^0.12.1",
-    "sanitize-html": "^2.6.0",
     "trim-canvas": "^0.1.2",
-    "uuid": "^8.3.2",
-    "validate.js": "^0.13.1",
     "vue": "^2.6.14",
     "vue-class-component": "^7.2.6",
     "vue-flatpickr-component": "^8.1.7",
@@ -57,16 +39,16 @@
     "vue-signature-pad": "2.0.4",
     "vue-the-mask": "^0.11.1",
     "vue-tippy": "^4.13.0",
-    "vue-typed-mixins": "^0.2.0",
-    "xml2js": "^0.4.23"
+    "vue-typed-mixins": "^0.2.0"
   },
   "peerDependencies": {
-    "vue": "^2.6.14",
-    "@oneblink/apps": "^0.12.5-beta.1"
+    "@oneblink/apps": "^0.12.5-beta.1",
+    "vue": "^2.6.14"
   },
   "devDependencies": {
     "@oneblink/apps": "^0.12.5-beta.1",
     "@oneblink/types": "github:oneblink/types",
+    "@types/blueimp-load-image": "^5.14.4",
     "@types/color": "^3.0.2",
     "@types/file-saver": "^2.0.4",
     "@types/google.maps": "^3.47.2",

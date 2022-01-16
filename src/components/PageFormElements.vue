@@ -98,6 +98,7 @@ export default class PageFormElements extends PageFormElementsBase {
 
 <template>
   <div
+    :key="pageElement.id"
     :class="{
       'ob-page': true,
       'step-content': true,

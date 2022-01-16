@@ -156,7 +156,6 @@ export default Vue.extend({
 
 <template>
   <div
-    :key="element.id"
     class="ob-element cypress-element-container"
     :data-cypress-element-name="name"
     :data-ob-name="name"
@@ -168,7 +167,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementText
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -187,7 +185,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementTextarea
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -206,7 +203,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementNumber
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -225,7 +221,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementEmail
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -244,7 +239,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementTelephone
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -263,7 +257,6 @@ export default Vue.extend({
       v-if="element.type === 'radio'"
     >
       <FormElementRadio
-        :key="element.id"
         :id="id"
         :element="element"
         :value="value"
@@ -280,7 +273,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementCheckBoxes
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -301,7 +293,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementSelect
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -320,7 +311,6 @@ export default Vue.extend({
       v-if="element.type === 'autocomplete'"
     >
       <FormElementAutocomplete
-        :key="element.id"
         :id="id"
         :element="element"
         :value="value"
@@ -337,7 +327,6 @@ export default Vue.extend({
       v-if="element.type === 'boolean'"
     >
       <FormElementBoolean
-        :key="element.id"
         :id="id"
         :element="element"
         :value="value"
@@ -354,7 +343,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementDate
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -373,7 +361,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementDateTime
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -392,7 +379,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementTime
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -473,9 +459,9 @@ export default Vue.extend({
       :stringifyAutoLookupValue="stringifyAttachments"
       :element="element"
       :model="model"
+      v-if="element.type === 'files'"
     >
       <FormElementFiles
-        v-if="element.type === 'files'"
         :id="id"
         :element="element"
         :value="value"
@@ -485,7 +471,7 @@ export default Vue.extend({
       />
     </LookupNotification>
     <FormElementCaptcha
-      v-if="element.type === 'captcha'"
+      v-if="element.type === 'captcha' && false"
       :id="id"
       :element="element"
       @updateSubmission="updateSubmission"
@@ -503,9 +489,9 @@ export default Vue.extend({
       :autoLookupValue="value ? value.value : undefined"
       :element="element"
       :model="model"
+      v-if="element.type === 'compliance'"
     >
       <FormElementCompliance
-        v-if="element.type === 'compliance'"
         :id="id"
         :value="value"
         :element="element"
@@ -519,7 +505,6 @@ export default Vue.extend({
     >
       <template v-slot:default="{ triggerLookup, isLookup }">
         <FormElementBarcodeScanner
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"
@@ -538,7 +523,6 @@ export default Vue.extend({
       v-if="element.type === 'geoscapeAddress'"
     >
       <FormElementGeoscapeAddress
-        :key="element.id"
         :id="id"
         :element="element"
         :value="value"
@@ -554,7 +538,6 @@ export default Vue.extend({
       v-if="element.type === 'pointAddress'"
     >
       <FormElementPointAddress
-        :key="element.id"
         :id="id"
         :element="element"
         :value="value"
@@ -581,7 +564,6 @@ export default Vue.extend({
     >
       <template>
         <FormElementCivicaStreetName
-          :key="element.id"
           :id="id"
           :element="element"
           :value="value"

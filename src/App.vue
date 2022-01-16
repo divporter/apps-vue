@@ -106,6 +106,8 @@ export default Vue.extend({
   async mounted() {
     this.loading = true
     this.definition = await formService.getForm(9050, 992)
+    // const definition = await formService.getForm(9050, 992)
+    // this.definition = this.removeCaptchaElement(definition)
     this.loading = false
   },
   methods: {
@@ -134,6 +136,22 @@ export default Vue.extend({
         newSubmission.TField1 === "four"
       Vue.set(this, "submission", newSubmission)
       Vue.set(this, "definition", definition)
+    },
+    removeCaptchaElement(definition: FormTypes.Form) {
+      const page = definition.elements.find(
+        (el) => el.type === "page" && el.label === "Advanced"
+      ) as FormTypes.PageElement
+      if (!page) {
+        return definition
+      }
+      const index = page.elements.findIndex(
+        (el) => "name" in el && el.name === "Recaptcha"
+      )
+      if (index === -1) {
+        return definition
+      }
+      page.elements.splice(index, 1)
+      return definition
     },
   },
 })
