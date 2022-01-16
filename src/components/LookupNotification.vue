@@ -95,13 +95,7 @@ export default class LookupNotification extends LookupNotificationBase {
     return this.isReadOnly
   }
 
-  mounted() {
-    if (this.autoLookupValueString) {
-      this.triggerLookup(this.autoLookupValueString)
-    }
-  }
-
-  @Watch("autoLookupValueString")
+  @Watch("autoLookupValueString", { immediate: true })
   onAutoLookupValueStringChanged(newValue: string): void {
     if (newValue !== undefined) {
       this.triggerLookup(newValue)
