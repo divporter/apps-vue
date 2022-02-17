@@ -471,7 +471,7 @@ export default Vue.extend({
       />
     </LookupNotification>
     <FormElementCaptcha
-      v-if="element.type === 'captcha'"
+      v-if="element.type === 'captcha' && false"
       :id="id"
       :element="element"
       @updateSubmission="updateSubmission"

@@ -105,7 +105,6 @@ export default Vue.extend({
   },
   async mounted() {
     this.loading = true
-    // this.definition = await formService.getForm(9050, 992)
     const definition = await formService.getForm(9050, 992)
     this.definition = this.removeCaptchaElement(definition)
     this.loading = false
