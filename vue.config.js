@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const nodeExternals = require("webpack-node-externals")
+
 module.exports = {
   transpileDependencies: ["color"],
   runtimeCompiler: true,
@@ -8,12 +11,6 @@ module.exports = {
         "balm-ui-css": "balm-ui/dist/balm-ui.css",
       },
     },
-    externals:
-      config.mode === "production"
-        ? {
-            "@oneblink/apps": "@oneblink/apps",
-            "aws-sdk": "aws-sdk",
-          }
-        : {},
+    externals: config.mode === "production" ? [nodeExternals()] : [],
   }),
 }
